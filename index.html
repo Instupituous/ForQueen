@@ -2,15 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-
-  <!-- ⭐ CRITICAL FOR iPHONE SAFARI READABILITY -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>Queen Elisa Ellen Quiz</title>
 
   <style>
-    /* ⭐ NYT ARTICLE-STYLE LAYOUT */
-
     body {
       margin: 0;
       padding: 0;
@@ -20,7 +15,6 @@
       line-height: 1.55;
     }
 
-    /* ⭐ Centered readable column */
     .content {
       max-width: 680px;
       margin: 0 auto;
@@ -43,7 +37,6 @@
       margin-bottom: 1.2em;
     }
 
-    /* ⭐ Full-width responsive images */
     .question-photo {
       width: 100%;
       height: auto;
@@ -52,7 +45,6 @@
       display: none;
     }
 
-    /* ⭐ Choices styled like NYT buttons */
     .choices {
       display: flex;
       flex-direction: column;
@@ -84,14 +76,12 @@
       border-color: #f44336;
     }
 
-    /* ⭐ Feedback text */
     .feedback {
       margin-top: 16px;
       font-size: 1.15rem;
       min-height: 40px;
     }
 
-    /* ⭐ Next button */
     .btn {
       margin-top: 24px;
       padding: 14px 20px;
@@ -108,7 +98,6 @@
       background: #333;
     }
 
-    /* ⭐ Results */
     #results-screen h2 {
       font-size: 1.6rem;
       margin-bottom: 12px;
@@ -118,27 +107,18 @@
       font-size: 1.25rem;
       margin-bottom: 20px;
     }
-
-    /* ⭐ Mobile tuning */
-    @media (max-width: 480px) {
-      h1 { font-size: 1.6rem; }
-      h2 { font-size: 1.3rem; }
-      p, .choice, .feedback, .btn { font-size: 1.1rem; }
-    }
   </style>
 </head>
 
 <body>
   <div class="content">
 
-    <!-- START SCREEN -->
     <section id="start-screen">
       <h1>Queen Elisa Ellen: The Classy Broad Quiz</h1>
       <p>You are about to be tested on your knowledge of Queen Elisa Ellen — her chaos, her class, her lore.</p>
       <button id="start-btn" class="btn">Begin</button>
     </section>
 
-    <!-- QUIZ SCREEN -->
     <section id="quiz-screen" style="display:none;">
       <img id="question-photo" class="question-photo" alt="">
       <h2 id="question-text"></h2>
@@ -147,7 +127,6 @@
       <button id="next-btn" class="btn" style="display:none;">Next</button>
     </section>
 
-    <!-- RESULTS SCREEN -->
     <section id="results-screen" style="display:none;">
       <h2>Your Results</h2>
       <div id="score-text"></div>
@@ -396,4 +375,128 @@
       choicesContainer.innerHTML = "";
       nextBtn.style.display = "none";
 
+      const q = quiz[currentQuestionIndex];
+      questionText.textContent = q.question;
 
+      if (q.photo) {
+        questionPhoto.src = q.photo;
+        questionPhoto.style.display = "block";
+      } else {
+        questionPhoto.style.display = "none";
+      }
+
+      if (Array.isArray(q.correctAnswers)) {
+        renderMultiSelect(q);
+      } else {
+        renderSingleSelect(q);
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderSingleSelect(q) {
+      q.choices.forEach((choiceText, index) => {
+        const btn = document.createElement("div");
+        btn.className = "choice";
+        btn.textContent = choiceText;
+        btn.addEventListener("click", () => handleSingleAnswer(index));
+        choicesContainer.appendChild(btn);
+      });
+    }
+
+    function handleSingleAnswer(selectedIndex) {
+      if (hasAnswered) return;
+      hasAnswered = true;
+
+      const q = quiz[currentQuestionIndex];
+      const buttons = Array.from(document.getElementsByClassName("choice"));
+
+      buttons.forEach((btn, index) => {
+        if (index === q.answerIndex) btn.classList.add("correct");
+        if (index === selectedIndex && index !== q.answerIndex) btn.classList.add("incorrect");
+      });
+
+      if (selectedIndex === q.answerIndex) {
+        score++;
+        feedback.textContent = q.correctResponse;
+      } else {
+        feedback.textContent = q.incorrectResponse;
+      }
+
+      setupNextButton();
+    }
+
+    function renderMultiSelect(q) {
+      q.choices.forEach((choiceText, index) => {
+        const label = document.createElement("label");
+        label.className = "choice";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = index;
+
+        const span = document.createElement("span");
+        span.textContent = choiceText;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        choicesContainer.appendChild(label);
+      });
+
+      nextBtn.textContent = "Submit";
+      nextBtn.style.display = "inline-block";
+
+      const newNext = nextBtn.cloneNode(true);
+      nextBtn.parentNode.replaceChild(newNext, nextBtn);
+      nextBtn = newNext;
+
+      nextBtn.addEventListener("click", () => handleMultiAnswer(q));
+    }
+
+    function handleMultiAnswer(q) {
+      if (hasAnswered) return;
+      hasAnswered = true;
+
+      const selected = Array.from(
+        document.querySelectorAll("#choices input[type='checkbox']:checked")
+      ).map(cb => parseInt(cb.value));
+
+      const key = selected.sort((a,b) => a - b).join(",");
+      const correctKey = q.correctAnswers.slice().sort((a,b) => a - b).join(",");
+      const response = q.responses[key] || "Interesting choice.";
+
+      if (key === correctKey) score++;
+      feedback.textContent = response;
+
+      setupNextButton();
+    }
+
+    function setupNextButton() {
+      nextBtn.textContent =
+        currentQuestionIndex === quiz.length - 1 ? "See Results" : "Next";
+      nextBtn.style.display = "inline-block";
+
+      const newNext = nextBtn.cloneNode(true);
+      nextBtn.parentNode.replaceChild(newNext, nextBtn);
+      nextBtn = newNext;
+
+      nextBtn.addEventListener("click", () => {
+        if (currentQuestionIndex < quiz.length - 1) {
+          currentQuestionIndex++;
+          showQuestion();
+        } else {
+          showResults();
+        }
+      });
+    }
+
+    function showResults() {
+      quizScreen.style.display = "none";
+      resultsScreen.style.display = "block";
+
+      const scoreText = document.getElementById("score-text");
+      scoreText.textContent = `You scored ${score} out of ${quiz.length}.`;
+    }
+  </script>
+</body>
+</html>
