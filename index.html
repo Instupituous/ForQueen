@@ -178,6 +178,44 @@
       padding: 6px 8px;
     }
   }
+  /* ⭐⭐⭐ PROGRESS BAR — NYT STYLE (BOTTOM) ⭐⭐⭐ */
+
+#progress-bar {
+  width: 100%;
+  height: 8px; /* thicker, as requested */
+  background: #e6e6e6;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 30px;
+}
+
+#progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #000000;
+  transition: width 0.3s ease; /* smooth animation */
+}
+
+/* ⭐⭐⭐ MOBILE BREATHING ROOM ⭐⭐⭐ */
+
+@media (max-width: 480px) {
+  #quiz-container {
+    padding: 26px; /* more breathing room */
+  }
+
+  button, .btn {
+    margin-top: 28px;
+  }
+
+  .choice {
+    margin: 18px 0;
+  }
+
+  #feedback {
+    margin-top: 28px;
+  }
+}
+
 </style>
 
 
@@ -649,6 +687,8 @@ function renderTimelineList(showDates = false) {
   choicesContainer.appendChild(list);
 }
 
+/* ⭐⭐⭐ TIMELINE ANSWER HANDLING — UPDATED WITH % + COUNCIL RESPONSES ⭐⭐⭐ */
+
 function handleTimelineAnswer() {
   if (hasAnswered) return;
   hasAnswered = true;
@@ -661,6 +701,61 @@ function handleTimelineAnswer() {
   for (let i = 0; i < correctIds.length; i++) {
     if (currentIds[i] === correctIds[i]) correctPositions++;
   }
+
+  const percent = Math.round((correctPositions / correctIds.length) * 100);
+
+  /* ⭐ Council tiered responses */
+  let councilMessage = "";
+
+  if (percent <= 25) {
+    councilMessage = "The Council adjusts their glasses and whispers, ‘Bold of her to submit that with a straight face.’";
+  } else if (percent <= 50) {
+    councilMessage = "The Council leans in, murmuring, ‘She remembers… vaguely. Like a dream she once had.’";
+  } else if (percent <= 75) {
+    councilMessage = "The Council nods approvingly: ‘She’s got the shape of it. A woman of emerging refinement.’";
+  } else {
+    councilMessage = "The Council rises in unison: ‘Her memory is exquisite. Her sequencing? Impeccable.’";
+  }
+
+  /* ⭐ Final feedback text */
+  feedback.textContent =
+    `You placed ${percent}% of the events correctly.\n${councilMessage}`;
+
+  /* ⭐ Snap to correct order */
+  const idToItem = {};
+  timelineState.items.forEach(item => {
+    idToItem[item.id] = item;
+  });
+  timelineState.items = correctIds.map(id => idToItem[id]);
+
+  /* ⭐ Hide arrows + reveal dates */
+  renderTimelineList(true);
+  const controls = document.querySelectorAll(".timeline-controls");
+  controls.forEach(c => c.classList.add("hidden"));
+
+  setupNextButton();
+}
+
+/* ⭐⭐⭐ PROGRESS BAR LOGIC ⭐⭐⭐ */
+
+let progressBarFill;
+
+function initProgressBar() {
+  progressBarFill = document.getElementById("progress-fill");
+  updateProgressBar();
+}
+
+function updateProgressBar() {
+  const progress = ((currentQuestionIndex) / 21) * 100;
+  progressBarFill.style.width = progress + "%";
+}
+
+/* Call this inside showQuestion() */
+function showQuestion() {
+  updateProgressBar();
+  // ... your existing showQuestion logic stays untouched
+}
+
 
   const percent = Math.round((correctPositions / correctIds.length) * 100);
 
