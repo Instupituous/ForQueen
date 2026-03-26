@@ -5,109 +5,168 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Queen Elisa Ellen Quiz</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      background: #ffffff;
-      color: #111;
-      line-height: 1.55;
-    }
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
 
-    .content {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 20px 18px;
-    }
+  #quiz-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
 
-    h1 {
-      font-size: 1.9rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
+  h1, h2 {
+    text-align: center;
+    margin-top: 0;
+  }
 
-    h2 {
-      font-size: 1.4rem;
-      margin-top: 0;
-    }
+  #start-screen, #quiz-screen, #results-screen {
+    display: none;
+  }
 
-    p {
-      font-size: 1.15rem;
-      margin-bottom: 1.2em;
-    }
+  #start-screen {
+    display: block;
+  }
 
-    .question-photo {
-      width: 100%;
-      height: auto;
-      border-radius: 6px;
-      margin: 18px 0;
-      display: none;
-    }
+  #question-photo {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: none;
+  }
 
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 12px;
-    }
+  /* ⭐ Standard answer choice boxes */
+  .choice {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    padding: 14px 16px;
+    margin: 12px 0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 16px;
+  }
 
-    .choice {
-      padding: 14px 16px;
-      font-size: 1.1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background: #f7f7f7;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
+  .choice:hover {
+    background: #f0f0f0;
+  }
 
-    .choice:hover {
-      background: #ececec;
-    }
+  .choice.correct {
+    background: #d4f8d4;
+    border-color: #4caf50;
+  }
 
-    .choice.correct {
-      background: #e6f4ea;
-      border-color: #4caf50;
-    }
+  .choice.incorrect {
+    background: #ffd6d6;
+    border-color: #e53935;
+  }
 
-    .choice.incorrect {
-      background: #fdecea;
-      border-color: #f44336;
-    }
+  /* ⭐ Buttons */
+  button, .btn {
+    background: #007bff;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+  }
 
-    .feedback {
-      margin-top: 16px;
-      font-size: 1.15rem;
-      min-height: 40px;
-    }
+  button:hover, .btn:hover {
+    background: #005fcc;
+  }
 
-    .btn {
-      margin-top: 24px;
-      padding: 14px 20px;
-      font-size: 1.15rem;
-      border-radius: 6px;
-      border: none;
-      background: #111;
-      color: white;
-      cursor: pointer;
-      display: inline-block;
-    }
+  #feedback {
+    margin-top: 20px;
+    font-weight: bold;
+    min-height: 40px;
+  }
 
-    .btn:hover {
-      background: #333;
-    }
+  /* ⭐⭐⭐ TIMELINE QUESTION — NEW UI ⭐⭐⭐ */
 
-    #results-screen h2 {
-      font-size: 1.6rem;
-      margin-bottom: 12px;
-    }
+  /* Container for the list */
+  .timeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
 
-    #score-text {
-      font-size: 1.25rem;
-      margin-bottom: 20px;
+  /* Each timeline item becomes a full-width box */
+  .timeline-item {
+    background: #ffffff;
+    border: 2px solid #d9e6ff; /* subtle tint to show it's movable */
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+  }
+
+  .timeline-item:hover {
+    background: #f3f7ff;
+  }
+
+  /* Label text */
+  .timeline-label {
+    font-size: 16px;
+    flex: 1;
+    padding-right: 10px;
+  }
+
+  /* Up/down button container */
+  .timeline-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Up/down buttons */
+  .timeline-btn {
+    background: #e3ecff;
+    border: 1px solid #b6ccff;
+    color: #003a99;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 38px;
+    transition: 0.2s;
+  }
+
+  .timeline-btn:hover {
+    background: #d4e3ff;
+  }
+
+  /* After submission, arrows disappear */
+  .timeline-controls.hidden {
+    display: none;
+  }
+
+  /* Mobile-friendly adjustments */
+  @media (max-width: 480px) {
+    .timeline-item {
+      padding: 12px;
     }
-  </style>
+    .timeline-btn {
+      padding: 5px 8px;
+      width: 34px;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -499,121 +558,127 @@
     setupNextButton();
   }
 
-  /* ⭐⭐⭐ TIMELINE RENDERER ⭐⭐⭐ */
-  function renderTimeline(q) {
-    timelineState = {
-      question: q,
-      items:
-              shuffle(q.items)
-    };
+/* ⭐⭐⭐ NEW TIMELINE RENDERER — FULL BOX UI ⭐⭐⭐ */
 
-    renderTimelineList();
+function renderTimeline(q) {
+  // Initialize timeline state
+  timelineState = {
+    question: q,
+    items: shuffle(q.items.slice()) // shuffled copy
+  };
 
-    nextBtn.textContent = "Submit";
-    nextBtn.style.display = "inline-block";
+  // Render the list
+  renderTimelineList(false);
 
-    const newNext = nextBtn.cloneNode(true);
-    nextBtn.parentNode.replaceChild(newNext, nextBtn);
-    nextBtn = newNext;
+  // Prepare the submit button
+  nextBtn.textContent = "Submit";
+  nextBtn.style.display = "inline-block";
 
-    nextBtn.addEventListener("click", () => handleTimelineAnswer());
-  }
+  const newNext = nextBtn.cloneNode(true);
+  nextBtn.parentNode.replaceChild(newNext, nextBtn);
+  nextBtn = newNext;
 
-  function renderTimelineList(showDates = false) {
-    choicesContainer.innerHTML = "";
+  nextBtn.addEventListener("click", () => handleTimelineAnswer());
+}
 
-    const list = document.createElement("div");
-    list.className = "timeline-list";
+function renderTimelineList(showDates = false) {
+  choicesContainer.innerHTML = "";
 
-    timelineState.items.forEach((item, index) => {
-      const row = document.createElement("div");
-      row.className = "timeline-item";
+  const list = document.createElement("div");
+  list.className = "timeline-list";
 
-      const label = document.createElement("div");
-      label.className = "timeline-label";
-      label.textContent = showDates
-        ? `${item.label} — ${item.date}`
-        : item.label;
+  timelineState.items.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "timeline-item";
 
-      const controls = document.createElement("div");
-      controls.className = "timeline-controls";
+    const label = document.createElement("div");
+    label.className = "timeline-label";
+    label.textContent = showDates
+      ? `${item.label} — ${item.date}`
+      : item.label;
 
-      const upBtn = document.createElement("button");
-      upBtn.type = "button";
-      upBtn.className = "timeline-btn";
-      upBtn.textContent = "↑";
-      upBtn.addEventListener("click", () => {
-        if (hasAnswered) return;
-        if (index === 0) return;
-        const items = timelineState.items;
-        [items[index - 1], items[index]] = [items[index], items[index - 1]];
-        renderTimelineList(showDates);
-      });
+    const controls = document.createElement("div");
+    controls.className = "timeline-controls";
 
-      const downBtn = document.createElement("button");
-      downBtn.type = "button";
-      downBtn.className = "timeline-btn";
-      downBtn.textContent = "↓";
-      downBtn.addEventListener("click", () => {
-        if (hasAnswered) return;
-        const items = timelineState.items;
-        if (index === items.length - 1) return;
-        [items[index + 1], items[index]] = [items[index], items[index + 1]];
-        renderTimelineList(showDates);
-      });
-
-      controls.appendChild(upBtn);
-      controls.appendChild(downBtn);
-
-      row.appendChild(label);
-      row.appendChild(controls);
-      list.appendChild(row);
+    const upBtn = document.createElement("button");
+    upBtn.type = "button";
+    upBtn.className = "timeline-btn";
+    upBtn.textContent = "↑";
+    upBtn.addEventListener("click", () => {
+      if (hasAnswered) return;
+      if (index === 0) return;
+      const items = timelineState.items;
+      [items[index - 1], items[index]] = [items[index], items[index - 1]];
+      renderTimelineList(false);
     });
 
-    choicesContainer.appendChild(list);
-  }
-
-  function handleTimelineAnswer() {
-    if (hasAnswered) return;
-    hasAnswered = true;
-
-    const q = timelineState.question;
-    const currentIds = timelineState.items.map(item => item.id);
-    const correctIds = q.correctOrder;
-
-    let correctPositions = 0;
-    for (let i = 0; i < correctIds.length; i++) {
-      if (currentIds[i] === correctIds[i]) correctPositions++;
-    }
-
-    const percent = Math.round((correctPositions / correctIds.length) * 100);
-
-    let message;
-    if (percent === 100) {
-      message = q.perfectResponse;
-      score++;
-    } else if (percent >= 75) {
-      message = q.strongResponse;
-    } else if (percent >= 50) {
-      message = q.decentResponse;
-    } else {
-      message = q.weakResponse;
-    }
-
-    feedback.textContent =
-      `${message} (${correctPositions} of ${correctIds.length} in the exact right spot.)`;
-
-    // Snap to correct order and reveal dates
-    const idToItem = {};
-    timelineState.items.forEach(item => {
-      idToItem[item.id] = item;
+    const downBtn = document.createElement("button");
+    downBtn.type = "button";
+    downBtn.className = "timeline-btn";
+    downBtn.textContent = "↓";
+    downBtn.addEventListener("click", () => {
+      if (hasAnswered) return;
+      const items = timelineState.items;
+      if (index === items.length - 1) return;
+      [items[index + 1], items[index]] = [items[index], items[index + 1]];
+      renderTimelineList(false);
     });
-    timelineState.items = correctIds.map(id => idToItem[id]);
 
-    renderTimelineList(true);
+    controls.appendChild(upBtn);
+    controls.appendChild(downBtn);
 
-    setupNextButton();
+    row.appendChild(label);
+    row.appendChild(controls);
+    list.appendChild(row);
+  });
+
+  choicesContainer.appendChild(list);
+}
+
+function handleTimelineAnswer() {
+  if (hasAnswered) return;
+  hasAnswered = true;
+
+  const q = timelineState.question;
+  const currentIds = timelineState.items.map(item => item.id);
+  const correctIds = q.correctOrder;
+
+  let correctPositions = 0;
+  for (let i = 0; i < correctIds.length; i++) {
+    if (currentIds[i] === correctIds[i]) correctPositions++;
   }
+
+  const percent = Math.round((correctPositions / correctIds.length) * 100);
+
+  let message;
+  if (percent === 100) {
+    message = q.perfectResponse;
+    score++;
+  } else if (percent >= 75) {
+    message = q.strongResponse;
+  } else if (percent >= 50) {
+    message = q.decentResponse;
+  } else {
+    message = q.weakResponse;
+  }
+
+  feedback.textContent =
+    `${message} (${correctPositions} of ${correctIds.length} in the exact right spot.)`;
+
+  // Snap to correct order (your choice: B)
+  const idToItem = {};
+  timelineState.items.forEach(item => {
+    idToItem[item.id] = item;
+  });
+  timelineState.items = correctIds.map(id => idToItem[id]);
+
+  // Hide arrows after submission
+  renderTimelineList(true);
+  const controls = document.querySelectorAll(".timeline-controls");
+  controls.forEach(c => c.classList.add("hidden"));
+
+  setupNextButton();
+}
 
   function setupNextButton() {
     nextBtn.textContent =
