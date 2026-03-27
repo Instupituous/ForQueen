@@ -68,12 +68,13 @@
     }
 
     #question-photo {
-      width: 100%;
-      max-height: 360px;
-      object-fit: cover;
-      margin: 16px 0;
-      display: none;
-      border: 1px solid #e0e0e0;
+  width: 100%;
+  max-height: 480px;   /* gives breathing room for tall images */
+  object-fit: contain; /* shows the whole image */
+  margin: 16px 0;
+  display: none;
+  border: 1px solid #e0e0e0;
+  background-color: #ffffff; /* prevents weird transparency edges */
     }
 
     #choices {
