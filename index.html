@@ -896,7 +896,23 @@ birthdayRestartBtn.addEventListener("click", () => {
   location.reload();
 });
 */
-    
+/* ---------------------------------------------------------
+   BIRTHDAY SCREEN TRANSITION
+--------------------------------------------------------- */
+const continueBtn = document.getElementById("continue-btn");
+const birthdayScreen = document.getElementById("birthday-screen");
+const birthdayRestartBtn = document.getElementById("birthday-restart-btn");
+
+continueBtn.addEventListener("click", () => {
+  resultsScreen.style.display = "none";
+  birthdayScreen.style.display = "block";
+  launchConfetti();
+});
+
+birthdayRestartBtn.addEventListener("click", () => {
+  location.reload();
+});
+7
 function launchConfetti() {
   const duration = 2000;
   const end = Date.now() + duration;
