@@ -268,7 +268,23 @@
 
       <div id="score-text"></div>
       <button id="restart-btn" class="btn">Try Again</button>
+      <button id="continue-btn" class="btn" style="margin-top:12px;">But Wait! There’s More</button>
     </section>
+    <!-- ⭐⭐ INSERT BIRTHDAY SCREEN HERE ⭐⭐ -->
+<section id="birthday-screen" style="display:none; text-align:center; margin-top:24px;">
+  <h2>Happy Birthday, Elisa Ellen</h2>
+
+  <p class="birthday-message" style="white-space:pre-line; margin:16px 0; font-size:1.1rem;">
+    Happy Birthday my Queen! Thank you for changing my life in all the best ways.
+    I love you more than I can say.
+  </p>
+
+  <img id="birthday-photo" src="ElisaandIhugging.jpg"
+       alt="Birthday Photo"
+       style="max-width:100%; max-height:480px; object-fit:contain; border:1px solid #e0e0e0; margin:16px 0;" />
+
+  <button id="birthday-restart-btn" class="btn">Replay the Quiz</button>
+</section>
   </div>
 
   <script>
@@ -845,6 +861,68 @@
       }
       return "The Council faints. Truly. A performance so chaotic it defies classification.";
     }
+    /* ---------------------------------------------------------
+   BIRTHDAY SCREEN TRANSITION + CONFETTI
+--------------------------------------------------------- */
+const continueBtn = document.getElementById("continue-btn");
+const birthdayScreen = document.getElementById("birthday-screen");
+const birthdayRestartBtn = document.getElementById("birthday-restart-btn");
+
+continueBtn.addEventListener("click", () => {
+  resultsScreen.style.display = "none";
+  birthdayScreen.style.display = "block";
+  launchConfetti();
+});
+
+birthdayRestartBtn.addEventListener("click", () => {
+  location.reload();
+});
+
+/* ---------------------------------------------------------
+   CONFETTI ANIMATION (lightweight, no libraries)
+--------------------------------------------------------- */
+function launchConfetti() {
+  const duration = 2000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    for (let i = 0; i < 7; i++) {
+      const confetti = document.createElement("div");
+      confetti.style.position = "fixed";
+      confetti.style.top = "-10px";
+      confetti.style.left = Math.random() * window.innerWidth + "px";
+      confetti.style.width = "8px";
+      confetti.style.height = "8px";
+      confetti.style.backgroundColor = randomConfettiColor();
+      confetti.style.opacity = "0.9";
+      confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+      confetti.style.borderRadius = "2px";
+      confetti.style.pointerEvents = "none";
+      confetti.style.zIndex = "9999";
+
+      document.body.appendChild(confetti);
+
+      const fallDuration = 1200 + Math.random() * 800;
+      confetti.animate(
+        [
+          { transform: `translateY(0px) rotate(0deg)` },
+          { transform: `translateY(${window.innerHeight + 40}px) rotate(360deg)` }
+        ],
+        { duration: fallDuration, easing: "linear" }
+      ).onfinish = () => confetti.remove();
+    }
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
+
+function randomConfettiColor() {
+  const colors = ["#ff6b6b", "#ffd93d", "#6bcB77", "#4d96ff", "#f06595"];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
   </script>
 </body>
 </html>
