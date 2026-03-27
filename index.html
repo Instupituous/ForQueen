@@ -509,13 +509,14 @@ let quiz = shuffle([
     correctResponse: "Correct! Julia is the star of the show — even in shadow form.",
     incorrectResponse: "Incorrect! But honestly, with this photo, any of those answers felt possible."
   },
-  {
-    question: "What is her preferred way to win an argument?",
-    choices: ["Logic","Sarcasm","Being right","All of the above"],
-    answerIndex: 3,
-    correctResponse: "Correct. Queen Elisa Mineck wins by existing.",
-    incorrectResponse: "Incorrect. The Council rules in her favor anyway."
-  },
+ {
+  question: "Her beauty pulls me in, her laugh keeps me there, but her brain is the part of her I’ve worshipped most, right from day one. Which band is playing the song that captures that for me?",
+  choices: ["Morphine", "All Them Witches", "Buddy Guy", "Jack White"],
+  answerIndex: 0,
+  correctResponse: "Of course. Morphine has the kind of slinky, cerebral swagger worthy of that brain of yours.",
+  incorrectResponse: "Close, but not the one. Your brain has its own soundtrack — and this wasn’t it.",
+  audio: "MorphineGood.mp3"
+}
   {
     question: "What is the correct title for Elisa at the end of this quiz?",
     choices: [
@@ -569,6 +570,40 @@ function showQuestion() {
 
   const q = quiz[currentQuestionIndex];
   questionText.textContent = q.question;
+// Stop any previous audio
+if (window.currentQuestionAudio) {
+  window.currentQuestionAudio.pause();
+  window.currentQuestionAudio.currentTime = 0;
+}
+
+// If this question has audio, fade it in
+if (questions[currentQuestion].audio) {
+  const audio = new Audio(questions[currentQuestion].audio);
+  window.currentQuestionAudio = audio;
+
+  audio.volume = 0.5;
+  audio.loop = true;
+  audio.play();
+
+  // Phase 1: 0.5 → 0.7 over 2 seconds
+  let vol = 0.5;
+  const phase1 = setInterval(() => {
+    vol += 0.01;
+    audio.volume = vol;
+    if (vol >= 0.7) {
+      clearInterval(phase1);
+
+      // Phase 2: 0.7 → 1.0 over next 2 seconds
+      const phase2 = setInterval(() => {
+        vol += 0.01;
+        audio.volume = vol;
+        if (vol >= 1.0) {
+          clearInterval(phase2);
+        }
+      }, 50);
+    }
+  }, 50);
+}
 
   if (q.photo) {
     questionPhoto.src = q.photo;
@@ -790,6 +825,12 @@ function setupNextButton() {
   nextBtn = newNext;
 
   nextBtn.addEventListener("click", () => {
+    // Stop audio when moving to the next question
+if (window.currentQuestionAudio) {
+  window.currentQuestionAudio.pause();
+  window.currentQuestionAudio.currentTime = 0;
+}
+
     if (currentQuestionIndex < quiz.length - 1) {
       currentQuestionIndex++;
       showQuestion();
