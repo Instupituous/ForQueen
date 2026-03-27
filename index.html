@@ -287,6 +287,25 @@
   </div>
 
   <script>
+    // Core screen elements
+const launchScreen = document.getElementById("launch-screen");
+const quizScreen = document.getElementById("quiz-screen");
+const resultsScreen = document.getElementById("results-screen");
+const birthdayScreen = document.getElementById("birthday-screen");
+
+// Buttons
+const startBtn = document.getElementById("start-btn");
+const continueBtn = document.getElementById("continue-btn");
+const birthdayRestartBtn = document.getElementById("birthday-restart-btn");
+
+// Quiz elements
+const questionText = document.getElementById("question-text");
+const answersContainer = document.getElementById("answers-container");
+const scoreText = document.getElementById("score-text");
+const verdictText = document.getElementById("verdict-text");
+const pieFill = document.getElementById("pie-fill");
+const piePercent = document.getElementById("pie-percent");
+
     let quiz = shuffle([
       {
         question: "What the heck does this guy want from Elisa Ellen, anyway?",
