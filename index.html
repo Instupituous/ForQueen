@@ -2,414 +2,280 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Queen Elisa Ellen Quiz</title>
-
+  <title>Elisa Quiz – Timeline Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 0;
-      color: #333;
-      line-height: 1.55; /* NYT spacing */
+      background: #050510;
+      color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
 
-    #quiz-container {
-      max-width: 700px;
-      margin: 50px auto;
-      background: white;
-      padding: 35px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    .container {
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     h1, h2 {
       text-align: center;
-      margin-top: 0;
-      margin-bottom: 25px;
-      font-weight: 600;
+    }
+
+    .btn {
+      background: #7b5cff;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 16px;
+      display: inline-block;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
     }
 
     #start-screen, #quiz-screen, #results-screen {
       display: none;
     }
 
-    #start-screen {
+    #start-screen.active,
+    #quiz-screen.active,
+    #results-screen.active {
       display: block;
     }
 
-    /* ⭐ Image behavior */
-    #question-photo {
-      width: 100%;
-      height: auto;
-      max-height: none; /* allow full natural height */
-      object-fit: contain; /* no cropping */
-      border-radius: 10px;
-      margin-bottom: 25px;
-      display: none;
+    #choices {
+      margin-top: 16px;
     }
 
-    /* ⭐ Answer choice boxes */
     .choice {
-      background: #ffffff;
-      border: 1px solid #ccc;
-      padding: 16px 18px;
-      margin: 16px 0;
-      border-radius: 8px;
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
       cursor: pointer;
-      transition: 0.2s;
-      font-size: 18px;
-      line-height: 1.4;
-      display: block;
-    }
-
-    .choice:hover {
-      background: #f5f5f5;
-    }
-
-    .choice.correct {
-      background: #e7f8e7;
-      border-color: #4caf50;
-    }
-
-    .choice.incorrect {
-      background: #ffe5e5;
-      border-color: #d9534f;
-    }
-
-    /* ⭐ NYT-style buttons */
-    button, .btn {
-      background: #ffffff;
-      color: #000000;
-      padding: 12px 20px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 17px;
-      margin-top: 25px;
-      transition: 0.2s;
-    }
-
-    button:hover, .btn:hover {
-      background: #f2f2f2;
-    }
-
-    #feedback {
-      margin-top: 25px;
-      font-weight: bold;
-      min-height: 40px;
-      line-height: 1.4;
-      white-space: pre-line;
-    }
-
-    /* ⭐⭐⭐ TIMELINE QUESTION — UI ⭐⭐⭐ */
-
-    .timeline-list {
       display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 15px;
-    }
-
-    .timeline-item {
-      background: #ffffff;
-      border: 2px solid #d9e6ff;
-      border-radius: 10px;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      transition: 0.2s;
-    }
-
-    .timeline-item:hover {
-      background: #f3f7ff;
-    }
-
-    .timeline-label {
-      font-size: 18px;
-      font-weight: 600;
-      flex: 1;
-      padding-right: 12px;
-      line-height: 1.35;
-    }
-
-    .timeline-controls {
-      display: flex;
-      flex-direction: column;
       gap: 8px;
     }
 
-    .timeline-btn {
-      background: #e3ecff;
-      border: 1px solid #b6ccff;
-      color: #003a99;
-      padding: 7px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 18px;
-      width: 40px;
-      transition: 0.2s;
+    .choice input {
+      accent-color: #7b5cff;
     }
 
-    .timeline-btn:hover {
-      background: #d4e3ff;
+    .choice.selected {
+      border-color: #7b5cff;
+      background: rgba(123, 92, 255, 0.15);
     }
 
-    .timeline-controls.hidden {
-      display: none;
+    #feedback {
+      margin-top: 12px;
+      min-height: 24px;
+      font-size: 14px;
     }
 
-    /* ⭐⭐⭐ PROGRESS BAR — NYT STYLE (BOTTOM) ⭐⭐⭐ */
-
+    /* Progress bar */
     #progress-bar {
       width: 100%;
       height: 8px;
-      background: #e6e6e6;
-      border-radius: 4px;
+      background: #222;
+      border-radius: 999px;
       overflow: hidden;
-      margin-top: 30px;
+      margin-top: 16px;
     }
 
     #progress-fill {
       height: 100%;
       width: 0%;
-      background: #000000;
+      background: linear-gradient(90deg, #7b5cff, #ff6ad5);
       transition: width 0.3s ease;
     }
 
-    /* ⭐⭐⭐ MOBILE BREATHING ROOM ⭐⭐⭐ */
-
-    @media (max-width: 480px) {
-      #quiz-container {
-        padding: 26px;
-      }
-
-      button, .btn {
-        margin-top: 28px;
-      }
-
-      .choice {
-        margin: 18px 0;
-        font-size: 17px;
-      }
-
-      #feedback {
-        margin-top: 28px;
-      }
-
-      .timeline-item {
-        padding: 14px;
-      }
-
-      .timeline-label {
-        font-size: 17px;
-      }
-
-      .timeline-btn {
-        width: 36px;
-        padding: 6px 8px;
-      }
+    /* Timeline */
+    .timeline-container {
+      margin-top: 16px;
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.03);
     }
-    /* ⭐⭐⭐ RESULTS PIE CHART — NYT STYLE ⭐⭐⭐ */
 
-#results-visual {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 30px;
-}
+    .timeline-item {
+      border: 1px solid #444;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      background: #111;
+      cursor: grab;
+      user-select: none;
+    }
 
-.pie-chart {
-  width: 180px;
-  height: 180px;
-  position: relative;
-}
+    .timeline-item.dragging {
+      opacity: 0.6;
+    }
 
-.pie-chart svg {
-  transform: rotate(-90deg);
-  width: 100%;
-  height: 100%;
-}
+    .timeline-item.drop-target {
+      border-color: #7b5cff;
+    }
 
-.pie-chart text {
-  font-size: 32px;
-  font-weight: 600;
-  fill: #000;
-  text-anchor: middle;
-  dominant-baseline: middle;
-}
+    /* Results */
+    #results-visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 16px;
+    }
 
-#verdict-text {
-  font-size: 20px;
-  line-height: 1.45;
-  margin-top: 20px;
-  text-align: center;
-  font-weight: 500;
-  white-space: pre-line;
-}
+    .pie-chart {
+      width: 160px;
+      height: 160px;
+      margin-bottom: 12px;
+    }
 
+    .pie-chart svg {
+      transform: rotate(-90deg);
+    }
+
+    .pie-chart text {
+      transform: rotate(90deg);
+      text-anchor: middle;
+      dominant-baseline: middle;
+      fill: #f5f5f5;
+      font-size: 20px;
+    }
+
+    #results-text {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    img#question-photo {
+      max-width: 100%;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div id="quiz-container">
-    <section id="start-screen">
-      <h1>Queen Elisa Ellen: The Classy Broad Quiz</h1>
-      <p>You are about to be tested on your knowledge of Queen Elisa Ellen — her chaos, her class, her lore.</p>
-      <button id="start-btn" class="btn">Begin</button>
+  <div class="container">
+    <!-- Start Screen -->
+    <section id="start-screen" class="active">
+      <h1>The Council Awaits</h1>
+      <p style="text-align:center; margin-top:8px;">
+        A small panel of extremely biased judges would like to review your memories.
+      </p>
+      <div style="text-align:center;">
+        <button id="start-btn" class="btn">Begin</button>
+      </div>
     </section>
 
-    <section id="quiz-screen" style="display:none;">
+    <!-- Quiz Screen -->
+    <section id="quiz-screen">
       <img id="question-photo" alt="">
       <h2 id="question-text"></h2>
       <div id="choices"></div>
       <div id="feedback"></div>
 
-      <!-- Progress bar -->
       <div id="progress-bar">
         <div id="progress-fill"></div>
       </div>
 
       <button id="next-btn" class="btn" style="display:none;">Next</button>
-      <!-- ⭐ ADD THIS LINE HERE ⭐ -->
-<button id="submit-timeline-btn" class="btn" style="display:none;">Submit Timeline</button>
+      <button id="submit-timeline-btn" class="btn" style="display:none;">Submit Timeline</button>
     </section>
 
-   <section id="results-screen" style="display:none;">
-  <h2>Your Results</h2>
-
-  <div id="results-visual">
-    <div class="pie-chart">
-      <svg viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" stroke="#e6e6e6" stroke-width="10" fill="white"></circle>
-        <circle id="pie-fill" cx="50" cy="50" r="45" stroke="#000000" stroke-width="10"
-                fill="none" stroke-linecap="round"
-                stroke-dasharray="283" stroke-dashoffset="283"></circle>
-        <text id="pie-percent" x="50" y="55">0%</text>
-      </svg>
-    </div>
-
-    <div id="verdict-text"></div>
-  </div>
-
-  <div id="score-text"></div>
-  <button id="restart-btn" class="btn">Try Again</button>
-</section>
-
+    <!-- Results Screen -->
+    <section id="results-screen">
+      <h2>Your Results</h2>
+      <div id="results-visual"></div>
+      <div id="results-text"></div>
+    </section>
   </div>
 
   <script>
+    // --- State ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const startScreen = document.getElementById("start-screen");
+    const quizScreen = document.getElementById("quiz-screen");
+    const resultsScreen = document.getElementById("results-screen");
+
+    const startBtn = document.getElementById("start-btn");
+    const questionText = document.getElementById("question-text");
+    const choices = document.getElementById("choices");
+    const feedback = document.getElementById("feedback");
+    const nextBtn = document.getElementById("next-btn");
+    const submitTimelineBtn = document.getElementById("submit-timeline-btn");
+    const progressFill = document.getElementById("progress-fill");
+    const questionPhoto = document.getElementById("question-photo");
+    const resultsVisual = document.getElementById("results-visual");
+    const resultsText = document.getElementById("results-text");
+
+    // --- Quiz Data (sample + your timeline as #12) ---
     const quiz = [
       {
-        question: "What the heck does this guy want from Elisa Ellen, anyway?",
-        photo: "MeinxmasChair.jpg",
-        choices: ["Nothing","Can I buy a vowel?","Selfless Partnership","1.21 gigawatts"],
-        answerIndex: 2,
-        correctResponse: "Correct. The Council beams with approval — selfless partnership is the only acceptable answer.",
-        incorrectResponse: "Incorrect. The Council squints at the photo, then at you, then back at the photo. Try again, mortal."
-      },
-      {
-        question: "What is Elisa most likely to be doing when she enters her full Classy Broad form?",
-        choices: ["Sipping wine","Fixing her hair","Giving a side-eye","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. The Council of Classy Broads rises as Queen Elisa Ellen ascends.",
-        incorrectResponse: "Incorrect. The Council tilts its head in confusion, Elisa Ellen Mineck expected better."
-      },
-      {
-        question: "When she claims to be both an Iowa Hawkeyes fan and an Iowa State Cyclones fan during March Madness, what does that actually make her?",
-        photo: "IowaLogos.jpg",
-        choices: [
-          "A well-meaning spectator who just wants everyone to have a nice tournament",
-          "A diplomatic visionary attempting to unify a divided state",
-          "Someone trying to argue both sides of the case and hoping the judge won't notice",
-          "A full-blown walking contradiction under NCAA law"
+        type: "multiple-choice",
+        question: "Warm-up: which of these is most likely to make you say “absolutely not”?",
+        options: [
+          "A 6am spin class",
+          "Camping without running water",
+          "A group icebreaker where you have to share a “fun fact”",
+          "A trust fall exercise with strangers"
         ],
-        answerIndex: 3,
-        correctResponse: "Correct. A contradiction of such magnitude it could power a small Midwestern town.",
-        incorrectResponse: "Incorrect. The Council of Classy Broads lowers their readers in unison, deeply unimpressed by your reasoning."
+        correctAnswer: 2
       },
       {
-        question: "What is Elisa's signature classy move?",
-        choices: ["The hair tuck","The knowing smirk","The elegant eye roll","The 'I'm not mad, just disappointed'"],
-        answerIndex: 1,
-        correctResponse: "Correct. The smirk that could launch a thousand ships.",
-        incorrectResponse: "Incorrect. The Council smirks at YOU now."
-      },
-      {
-        question: "What drink transforms her into her final form?",
-        choices: ["Malbec","Champagne","Old Fashioned","Espresso martini"],
-        answerIndex: 0,
-        correctResponse: "Correct. Malbec unlocks the Baller Queen. Fun Fact: Malbec’s dark fruit and soft tannins create a slow‑building, sensual warmth many call aphrodisiac.",
-        incorrectResponse: "Incorrect. The Council swirls a glass of Malbec in judgment."
-      },
-      {
-        question: "Who is this dashing gentleman?",
-        photo: "NeilFallon.jpg",
-        choices: [
-          "Ragnar O'Sealegs, pirate laureate of questionable ballads",
-          "Grunk the Unwashed, inventor of yelling",
-          "Ye Ole Mossbeard, keeper of the forest's damp secrets",
-          "Neil Fallon of Clutch, prophet of riff-driven wisdom"
+        type: "multiple-choice",
+        question: "Which of these is closest to your ideal night?",
+        options: [
+          "Perfectly mixed cocktail, dim lights, jazz in the background",
+          "Sweat, noise, and a band that might actually blow the speakers",
+          "Board games, snacks, and a running commentary on everyone’s strategy",
+          "A movie you’ve seen 10 times, but this time with better company"
         ],
-        answerIndex: 3,
-        correctResponse: "Correct. The Earth's rotation stabilizes; the Riff Prophets smile upon your wisdom.",
-        incorrectResponse: "Incorrect. A cosmic blues riff fades out in disappointment. Try again."
+        correctAnswer: 0
       },
       {
-        question: "What is Elisa's preferred level of chaos?",
-        choices: ["Low","Medium","High","Elegant chaos only"],
-        answerIndex: 3,
-        correctResponse: "Correct. She is chaos, but make it couture.",
-        incorrectResponse: "Incorrect. The Council adjusts its pearls in disapproval."
-      },
-      {
-        question: "Which of these best describes her laugh?",
-        choices: ["Cute giggle","Full-body laugh","Silent wheeze","The 'I can't breathe' laugh"],
-        answerIndex: 1,
-        correctResponse: "Correct. The laugh that could end wars.",
-        incorrectResponse: "Incorrect. The Council demands you study and know thyself."
-      },
-      {
-        question: "What is her most powerful weapon?",
-        choices: ["Her smile","Her confidence","Her sarcasm","Her entire existence"],
-        answerIndex: 3,
-        correctResponse: "Correct. Queen Elisa Ellen is a full arsenal.",
-        incorrectResponse: "Incorrect. The Council sighs, 'Her power is limitless.'"
-      },
-      {
-        question: "Which of these is she most likely to say?",
-        choices: ["'I'm fine.'","'NOPE!'","'You're ridiculous.'","'Both And.'"],
-        answerIndex: 1,
-        correctResponse: "Correct. Do not even try it.",
-        incorrectResponse: "Incorrect. The Council mutters, 'This was a gimme.'"
-      },
-      {
-        question: "Scientists have several theories about why celiac disease rates are rising. Which of the following are actually believed to contribute? (Check all that apply)",
-        choices: [
-          "Better awareness and improved testing",
-          "Gluten becoming sentient and holding a grudge",
-          "Environmental factors",
-          "Changes in gut microbiomes"
+        type: "multi-select",
+        question: "Click all that apply: which of these feel like “you”?",
+        options: [
+          "You notice the lighting in a room before the furniture",
+          "You remember conversations in scenes, not bullet points",
+          "You’d rather have one perfect night than ten “pretty good” ones",
+          "You mentally rewrite the soundtrack of your own life"
         ],
-        correctAnswers: [0,2,3],
-        responses: {
-          "0,2,3": "Correct. A masterclass in gluten-free wisdom — you navigate this world with the grace of someone who’s read every label from here to Omaha.",
-          "0,2": "So close. Still, your instincts are sharp enough to impress even the most seasoned gluten-free veterans.",
-          "0,3": "Nearly there. Your gluten-detective skills remain top-tier, even when one clue slips by.",
-          "2,3": "A strong showing — truly. You reason like someone who has survived years of gluten-free snack negotiations.",
-          "3,2": "A strong showing — truly. You reason like someone who has survived years of gluten-free snack negotiations.",
-          "0": "Incorrect, but admirable. You’re thinking like a mom who can spot hidden gluten from across a crowded room.",
-          "2": "Incorrect, but the confidence is inspiring. You carry yourself like someone who has conquered the gluten-free birthday party circuit.",
-          "3": "Incorrect, but honestly? The intuition is impressive. You radiate the energy of someone who has stared down many a suspicious ingredient list.",
-          "0,1,2,3": "Incorrect — but the ambition is breathtaking. You answered like a woman who refuses to be intimidated by gluten, science, or chaos.",
-          "1": "Incorrect. Hilarious, but incorrect. Still, the imagination on display deserves a gluten-free medal.",
-          "0,1": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
-          "1,2": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
-          "1,3": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
-          "1,2,3": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance."
-        }
+        correctAnswers: [0, 1, 2, 3]
       },
+      {
+        type: "photo",
+        question: "Imagine this is the opening shot of a night out. What’s the vibe?",
+        photoSrc: "https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg",
+        options: [
+          "We’re about to make a terrible decision in the best possible way.",
+          "Someone’s going to cry, but like… cathartically.",
+          "This ends with fries, no matter what.",
+          "We’re staying until they kick us out."
+        ],
+        correctAnswer: 2
+      },
+
+      // ... you can add more questions here ...
+
+      // Make sure this is the 12th question in the array
       {
         question: "Put these nights in the correct order — from the first spark to the latest chapter.",
         type: "timeline",
@@ -423,433 +289,400 @@
           { id: 7, label: "Bluebird on the Mountain", date: "Sep13" },
           { id: 8, label: "1799 Kitchen (first time)", date: "Sep22" }
         ],
-        correctOrder: [1,2,3,4,5,6,7,8],
+        correctOrder: [1, 2, 3, 4, 5, 6, 7, 8],
         perfectResponse: "The Council rises in unison — flawless sequencing, impeccable memory. You didn’t just live these nights, you archived them.",
         strongResponse: "The Council whispers, “She’s got taste, memory, and impeccable sequencing.” A few slips, but the story is intact.",
         decentResponse: "The Council adjusts their pearls — respectable recall, but some of these nights blurred together in the best possible way.",
         weakResponse: "The Council gasps dramatically — “Were you even there for these moments?” Fortunately, the Council is merciful… and also a little drunk on Malbec."
-      },
-      {
-        question: "What is The Queen's hidden superpower?",
-        choices: ["Reading people instantly","Looking flawless effortlessly","Making you laugh","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. Queen Elisa Ellen is a multi-class hero.",
-        incorrectResponse: "Incorrect. The Council chuckles knowingly."
-      },
-      {
-        question: "Her style leans toward which of the following?",
-        choices: [
-          "Traditional — lace, rituals, and the approval of ancestors",
-          "Modern — sleek, efficient, and probably involving an app",
-          "A perfect blend of old-school charm and new-school convenience",
-          "Whatever option requires the least ironing"
-        ],
-        answerIndex: 3,
-        correctResponse: "Correct. A choice as refined as it is revealing — well played.",
-        incorrectResponse: "Incorrect. A bold guess, but not the vibe we were looking for."
-      },
-      {
-        question: "What is her go-to move when she's unimpressed?",
-        choices: ["The eyebrow raise","The slow blink","The head tilt","The 'really?' face"],
-        answerIndex: 3,
-        correctResponse: "Correct. If looks could kill.",
-        incorrectResponse: "Incorrect. The Council raises its collective eyebrow at YOU."
-      },
-      {
-        question: "Across all the places she lived — Cedar Rapids, Indianapolis, Canton, San Diego, and Nashville — what's one thing they almost all have in common when it comes to college sports?",
-        choices: [
-          "All are home to legendary NCAA powerhouses that dominate national championships",
-          "Most of her cities are NCAA towns, but one proudly flies the NAIA flag",
-          "Every city she lived in has a mascot that looks like it hasn't slept since 1978",
-          "Each stop on her journey is united by fierce rivalries in the mythical Interstate Corn Belt Classic"
-        ],
-        answerIndex: 1,
-        correctResponse: "Correct. Most of her cities roll with NCAA muscle, but Canton stands there in its NAIA overalls, smiling stubbornly.",
-        incorrectResponse: "Incorrect. The Council of Classy Broads channels their inner space-wizard: 'This is not the pattern you are looking for.'"
-      },
-      {
-        question: "Which of the following did NOT happen on March 27, 1973 — the day Queen Elisa Ellen arrived?",
-        choices: [
-          "Marlon Brando refused his Oscar, sending Sacheen Littlefeather in his place",
-          "Captain Floyd J. Thompson — longest-held Vietnam POW — was released",
-          "UCLA won the NCAA title behind Bill Walton's 44-point game",
-          "Queen Elizabeth II opened the new London Bridge"
-        ],
-        answerIndex: 2,
-        correctResponse: "Correct. The Council applauds your precision — Walton's 44-point rampage happened on March 26, not the 27th.",
-        incorrectResponse: "Incorrect. The Council exchanges a slow, disappointed side-eye that could curdle milk."
-      },
-      {
-        question: "The Council presents Exhibit A. After which of our escapades was this message sent?",
-        photo: "TextPostEtch.jpg",
-        choices: [
-          "Following our date at Etch",
-          "Following our Nacho Libre date",
-          "Following our Geist date",
-          "Following my return from Baumann's"
-        ],
-        answerIndex: 0,
-        correctResponse: "Correct. The Council nods — Etch was the spark behind that message.",
-        incorrectResponse: "Incorrect. The Council arches a brow. 'Wow... guess that moment didn’t mean much to you.'"
-      },
-      {
-        question: "Who is in this photo?",
-        photo: "JuliaPlotting.jpg",
-        choices: [
-          "An evil succubus mischievously plotting to steal your soul",
-          "The person who steals Steve's Titans seat whenever Elisa decides the stadium needs better energy",
-          "Your wonderful, supportive, and loving daughter Julia",
-          "A creature who haunts youth sports fields demanding gluten-free options that never exist"
-        ],
-        answerIndex: 2,
-        correctResponse: "Correct! Julia is the star of the show — even in shadow form.",
-        incorrectResponse: "Incorrect! But honestly, with this photo, any of those answers felt possible."
-      },
-      {
-        question: "What is her preferred way to win an argument?",
-        choices: ["Logic","Sarcasm","Being right","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. Queen Elisa Mineck wins by existing.",
-        incorrectResponse: "Incorrect. The Council rules in her favor anyway."
-      },
-      {
-        question: "What is the correct title for Elisa at the end of this quiz?",
-        choices: ["Squeezy Poser Metalhead Elisa","Elisa Ellen the Sporty Classy Broad","Baller Queen Mineck","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. Bow before her.",
-        incorrectResponse: "Incorrect. The Council gasps dramatically."
       }
+
+      // ... and you can add more questions after this if you like ...
     ];
 
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let hasAnswered = false;
+    const totalQuestions = quiz.length;
 
-    const startScreen = document.getElementById("start-screen");
-    const quizScreen = document.getElementById("quiz-screen");
-    const resultsScreen = document.getElementById("results-screen");
-
-    const questionText = document.getElementById("question-text");
-    const questionPhoto = document.getElementById("question-photo");
-    const choicesContainer = document.getElementById("choices");
-    const feedback = document.getElementById("feedback");
-    let nextBtn = document.getElementById("next-btn");
-    const submitTimelineBtn = document.getElementById("submit-timeline-btn");
-
-
-    let timelineState = null;
-    let progressBarFill = document.getElementById("progress-fill");
-
-    document.getElementById("start-btn").addEventListener("click", () => {
-      startScreen.style.display = "none";
-      quizScreen.style.display = "block";
-      initProgressBar();
+    // --- Core Flow ---
+    startBtn.addEventListener("click", () => {
+      startScreen.classList.remove("active");
+      quizScreen.classList.add("active");
+      currentQuestionIndex = 0;
+      score = 0;
       showQuestion();
     });
 
-    document.getElementById("restart-btn").addEventListener("click", () => {
-      location.reload();
+    nextBtn.addEventListener("click", () => {
+      if (currentQuestionIndex < quiz.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+      } else {
+        showResults();
+      }
     });
 
-    function shuffle(array) {
-      const arr = array.slice();
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+    submitTimelineBtn.addEventListener("click", () => {
+      const question = quiz[currentQuestionIndex];
+      const userItems = Array.from(document.querySelectorAll(".timeline-item"));
+      const userOrder = userItems.map(item => Number(item.dataset.id));
+
+      const correctOrder = question.correctOrder;
+      const totalItems = correctOrder.length;
+
+      let correctCount = 0;
+      for (let i = 0; i < totalItems; i++) {
+        if (userOrder[i] === correctOrder[i]) {
+          correctCount++;
+        }
       }
-      return arr;
-    }
 
-    function initProgressBar() {
-      updateProgressBar();
-    }
+      const fraction = correctCount / totalItems;
+      score += fraction; // timeline = 1 point max
 
-    function updateProgressBar() {
-      const progress = (currentQuestionIndex / quiz.length) * 100;
-      progressBarFill.style.width = progress + "%";
-    }
+      // Reveal dates in correct order
+      revealTimelineAnswer(question);
+
+      // Then move to results after a short pause
+      setTimeout(showResults, 1600);
+    });
 
     function showQuestion() {
-      hasAnswered = false;
+      const question = quiz[currentQuestionIndex];
       feedback.textContent = "";
-      choicesContainer.innerHTML = "";
+      choices.innerHTML = "";
+      questionPhoto.style.display = "none";
+      submitTimelineBtn.style.display = "none";
       nextBtn.style.display = "none";
 
-      const q = quiz[currentQuestionIndex];
+      // Progress
+      const progressPercent = ((currentQuestionIndex) / totalQuestions) * 100;
+      progressFill.style.width = `${progressPercent}%`;
 
-      questionText.textContent = q.question;
+      questionText.textContent = question.question;
 
-      if (q.photo) {
-        questionPhoto.src = q.photo;
-        questionPhoto.style.display = "block";
-      } else {
-        questionPhoto.style.display = "none";
+      if (question.type === "multiple-choice") {
+        renderMultipleChoiceQuestion(question);
+      } else if (question.type === "multi-select") {
+        renderMultiSelectQuestion(question);
+      } else if (question.type === "photo") {
+        renderPhotoQuestion(question);
+      } else if (question.type === "timeline") {
+        renderTimelineQuestion(question);
       }
-
-      if (q.type === "timeline") {
-        renderTimeline(q);
-      } else if (Array.isArray(q.correctAnswers)) {
-        renderMultiSelect(q);
-      } else {
-        renderSingleSelect(q);
-      }
-
-      updateProgressBar();
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function renderSingleSelect(q) {
-      q.choices.forEach((choiceText, index) => {
-        const btn = document.createElement("div");
-        btn.className = "choice";
-        btn.textContent = choiceText;
-        btn.addEventListener("click", () => handleSingleAnswer(index));
-        choicesContainer.appendChild(btn);
-      });
-    }
+    // --- Renderers ---
+    function renderMultipleChoiceQuestion(question) {
+      submitTimelineBtn.style.display = "none";
+      nextBtn.style.display = "none";
 
-    function handleSingleAnswer(selectedIndex) {
-      if (hasAnswered) return;
-      hasAnswered = true;
+      question.options.forEach((optionText, index) => {
+        const div = document.createElement("div");
+        div.classList.add("choice");
 
-      const q = quiz[currentQuestionIndex];
-      const buttons = Array.from(document.getElementsByClassName("choice"));
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "mc";
+        input.value = index;
 
-      buttons.forEach((btn, index) => {
-        if (index === q.answerIndex) btn.classList.add("correct");
-        if (index === selectedIndex && index !== q.answerIndex) btn.classList.add("incorrect");
-      });
+        const label = document.createElement("span");
+        label.textContent = optionText;
 
-      if (selectedIndex === q.answerIndex) {
-        score++;
-        feedback.textContent = q.correctResponse;
-      } else {
-        feedback.textContent = q.incorrectResponse;
-      }
+        div.appendChild(input);
+        div.appendChild(label);
 
-      setupNextButton();
-    }
+        div.addEventListener("click", () => {
+          document.querySelectorAll(".choice").forEach(c => c.classList.remove("selected"));
+          div.classList.add("selected");
+          input.checked = true;
 
-    function renderMultiSelect(q) {
-      q.choices.forEach((choiceText, index) => {
-        const label = document.createElement("label");
-        label.className = "choice";
+          if (index === question.correctAnswer) {
+            feedback.textContent = "The Council nods approvingly.";
+            score += 1;
+          } else {
+            feedback.textContent = "The Council raises one eyebrow — interesting choice.";
+          }
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.value = index;
-
-        const span = document.createElement("span");
-        span.textContent = choiceText;
-
-        label.appendChild(checkbox);
-        label.appendChild(span);
-        choicesContainer.appendChild(label);
-      });
-
-      nextBtn.textContent = "Submit";
-      nextBtn.style.display = "inline-block";
-
-      const newNext = nextBtn.cloneNode(true);
-      nextBtn.parentNode.replaceChild(newNext, nextBtn);
-      nextBtn = newNext;
-
-      nextBtn.addEventListener("click", () => handleMultiAnswer(q));
-    }
-
-    function handleMultiAnswer(q) {
-      if (hasAnswered) return;
-      hasAnswered = true;
-
-      const selected = Array.from(
-        document.querySelectorAll("#choices input[type='checkbox']:checked")
-      ).map(cb => parseInt(cb.value));
-
-      const key = selected.sort((a,b) => a - b).join(",");
-      const correctKey = q.correctAnswers.slice().sort((a,b) => a - b).join(",");
-
-      const response = q.responses[key] || "Interesting choice.";
-
-      if (key === correctKey) score++;
-
-      feedback.textContent = response;
-
-      setupNextButton();
-    }
-
-    function renderTimeline(q) {
-      timelineState = {
-        question: q,
-        items: shuffle(q.items.slice())
-      };
-
-      renderTimelineList(false);
-
-      nextBtn.textContent = "Submit";
-      nextBtn.style.display = "inline-block";
-
-      const newNext = nextBtn.cloneNode(true);
-      nextBtn.parentNode.replaceChild(newNext, nextBtn);
-      nextBtn = newNext;
-
-      nextBtn.addEventListener("click", () => handleTimelineAnswer());
-    }
-
-    function renderTimelineList(showDates = false) {
-      choicesContainer.innerHTML = "";
-
-      const list = document.createElement("div");
-      list.className = "timeline-list";
-
-      timelineState.items.forEach((item, index) => {
-        const row = document.createElement("div");
-        row.className = "timeline-item";
-
-        const label = document.createElement("div");
-        label.className = "timeline-label";
-        label.textContent = showDates ? `${item.label} — ${item.date}` : item.label;
-
-        const controls = document.createElement("div");
-        controls.className = "timeline-controls";
-
-        const upBtn = document.createElement("button");
-        upBtn.type = "button";
-        upBtn.className = "timeline-btn";
-        upBtn.textContent = "↑";
-        upBtn.addEventListener("click", () => {
-          if (hasAnswered) return;
-          if (index === 0) return;
-          const items = timelineState.items;
-          [items[index - 1], items[index]] = [items[index], items[index - 1]];
-          renderTimelineList(false);
+          nextBtn.style.display = "inline-block";
         });
 
-        const downBtn = document.createElement("button");
-        downBtn.type = "button";
-        downBtn.className = "timeline-btn";
-        downBtn.textContent = "↓";
-        downBtn.addEventListener("click", () => {
-          if (hasAnswered) return;
-          const items = timelineState.items;
-          if (index === items.length - 1) return;
-          [items[index + 1], items[index]] = [items[index], items[index + 1]];
-          renderTimelineList(false);
+        choices.appendChild(div);
+      });
+    }
+
+    function renderMultiSelectQuestion(question) {
+      submitTimelineBtn.style.display = "none";
+      nextBtn.style.display = "none";
+
+      question.options.forEach((optionText, index) => {
+        const div = document.createElement("div");
+        div.classList.add("choice");
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = index;
+
+        const label = document.createElement("span");
+        label.textContent = optionText;
+
+        div.appendChild(input);
+        div.appendChild(label);
+
+        div.addEventListener("click", (e) => {
+          if (e.target.tagName !== "INPUT") {
+            input.checked = !input.checked;
+          }
+          div.classList.toggle("selected", input.checked);
         });
 
-        controls.appendChild(upBtn);
-        controls.appendChild(downBtn);
-
-        row.appendChild(label);
-        row.appendChild(controls);
-        list.appendChild(row);
+        choices.appendChild(div);
       });
 
-      choicesContainer.appendChild(list);
-    }
+      const submitBtn = document.createElement("button");
+      submitBtn.textContent = "Lock it in";
+      submitBtn.classList.add("btn");
+      submitBtn.style.marginTop = "12px";
 
-    function handleTimelineAnswer() {
-      if (hasAnswered) return;
-      hasAnswered = true;
+      submitBtn.addEventListener("click", () => {
+        const selected = Array.from(document.querySelectorAll(".choice input:checked"))
+          .map(input => Number(input.value))
+          .sort((a, b) => a - b);
 
-      const q = timelineState.question;
-      const currentIds = timelineState.items.map(item => item.id);
-      const correctIds = q.correctOrder;
+        const correct = [...question.correctAnswers].sort((a, b) => a - b);
 
-      let correctPositions = 0;
-      for (let i = 0; i < correctIds.length; i++) {
-        if (currentIds[i] === correctIds[i]) correctPositions++;
-      }
+        const isCorrect =
+          selected.length === correct.length &&
+          selected.every((val, idx) => val === correct[idx]);
 
-      const percent = Math.round((correctPositions / correctIds.length) * 100);
-
-      let message;
-      if (percent === 100) {
-        message = q.perfectResponse;
-        score++;
-      } else if (percent >= 75) {
-        message = q.strongResponse;
-      } else if (percent >= 50) {
-        message = q.decentResponse;
-      } else {
-        message = q.weakResponse;
-      }
-
-      feedback.textContent =
-        `${message}\n(${correctPositions} of ${correctIds.length} in the exact right spot — ${percent}% correct.)`;
-
-      const idToItem = {};
-      timelineState.items.forEach(item => {
-        idToItem[item.id] = item;
-      });
-      timelineState.items = correctIds.map(id => idToItem[id]);
-
-      renderTimelineList(true);
-
-      const controls = document.querySelectorAll(".timeline-controls");
-      controls.forEach(c => c.classList.add("hidden"));
-
-      setupNextButton();
-    }
-
-    function setupNextButton() {
-      nextBtn.textContent =
-        currentQuestionIndex === quiz.length - 1 ? "See Results" : "Next";
-      nextBtn.style.display = "inline-block";
-
-      const newNext = nextBtn.cloneNode(true);
-      nextBtn.parentNode.replaceChild(newNext, nextBtn);
-      nextBtn = newNext;
-
-      nextBtn.addEventListener("click", () => {
-        if (currentQuestionIndex < quiz.length - 1) {
-          currentQuestionIndex++;
-          showQuestion();
+        if (isCorrect) {
+          feedback.textContent = "The Council is delighted — you understood the assignment.";
+          score += 1;
         } else {
-          showResults();
+          feedback.textContent = "The Council murmurs — close, but not quite the full picture.";
         }
+
+        submitBtn.disabled = true;
+        nextBtn.style.display = "inline-block";
+      });
+
+      choices.appendChild(submitBtn);
+    }
+
+    function renderPhotoQuestion(question) {
+      submitTimelineBtn.style.display = "none";
+      nextBtn.style.display = "none";
+
+      questionPhoto.src = question.photoSrc;
+      questionPhoto.style.display = "block";
+
+      question.options.forEach((optionText, index) => {
+        const div = document.createElement("div");
+        div.classList.add("choice");
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "photo";
+        input.value = index;
+
+        const label = document.createElement("span");
+        label.textContent = optionText;
+
+        div.appendChild(input);
+        div.appendChild(label);
+
+        div.addEventListener("click", () => {
+          document.querySelectorAll(".choice").forEach(c => c.classList.remove("selected"));
+          div.classList.add("selected");
+          input.checked = true;
+
+          if (index === question.correctAnswer) {
+            feedback.textContent = "The Council approves of your cinematic instincts.";
+            score += 1;
+          } else {
+            feedback.textContent = "The Council tilts their head — bold interpretation.";
+          }
+
+          nextBtn.style.display = "inline-block";
+        });
+
+        choices.appendChild(div);
       });
     }
-// ⭐ ADD THIS ENTIRE BLOCK RIGHT HERE ⭐
-submitTimelineBtn.addEventListener("click", () => {
-  const userItems = Array.from(document.querySelectorAll(".timeline-item"));
-  const userOrder = userItems.map(item => item.dataset.value);
 
-  const correctOrder = quiz[currentQuestionIndex].correctOrder;
-  const totalItems = correctOrder.length;
+    function renderTimelineQuestion(question) {
+      choices.innerHTML = "";
+      feedback.textContent = "";
 
-  let correctCount = 0;
+      submitTimelineBtn.style.display = "inline-block";
+      nextBtn.style.display = "none";
 
-  for (let i = 0; i < totalItems; i++) {
-    if (userOrder[i] === correctOrder[i]) {
-      correctCount++;
+      const container = document.createElement("div");
+      container.classList.add("timeline-container");
+
+      // Shuffle items so they’re not already in order
+      const shuffled = [...question.items].sort(() => Math.random() - 0.5);
+
+      shuffled.forEach(item => {
+        const div = document.createElement("div");
+        div.classList.add("timeline-item");
+        div.textContent = item.label; // labels only for now
+        div.dataset.id = item.id;
+        container.appendChild(div);
+      });
+
+      choices.appendChild(container);
+      enableDragAndDrop(container);
     }
-  }
 
-  // Fair weighting: timeline question = 1 point max
-  const timelineFraction = correctCount / totalItems;
-  score += timelineFraction;
+    // --- Drag & Drop for Timeline ---
+    function enableDragAndDrop(container) {
+      let draggedItem = null;
 
-  showResults();
-});
-function showResults() {
-  quizScreen.style.display = "none";
-  resultsScreen.style.display = "block";
+      container.querySelectorAll(".timeline-item").forEach(item => {
+        item.draggable = true;
 
-  const percent = Math.round((score / quiz.length) * 100);
+        item.addEventListener("dragstart", () => {
+          draggedItem = item;
+          item.classList.add("dragging");
+        });
 
-  // Animate pie
-  animatePieChart(percent);
+        item.addEventListener("dragend", () => {
+          draggedItem = null;
+          item.classList.remove("dragging");
+        });
 
-  // Council verdict
-  const verdictText = document.getElementById("verdict-text");
-  verdictText.textContent = getCouncilVerdict(percent);
+        item.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          const bounding = item.getBoundingClientRect();
+          const offset = e.clientY - bounding.top;
+          const shouldInsertBefore = offset < bounding.height / 2;
 
-  // Score line
-  const scoreText = document.getElementById("score-text");
-  scoreText.textContent = `You scored ${score} out of ${quiz.length}.`;
-}
+          if (shouldInsertBefore) {
+            container.insertBefore(draggedItem, item);
+          } else {
+            container.insertBefore(draggedItem, item.nextSibling);
+          }
+        });
+      });
+    }
 
+    function revealTimelineAnswer(question) {
+      const container = choices.querySelector(".timeline-container");
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      question.correctOrder.forEach(id => {
+        const item = question.items.find(i => i.id === id);
+        const div = document.createElement("div");
+        div.classList.add("timeline-item");
+        div.textContent = `${item.label} — ${item.date}`;
+        container.appendChild(div);
+      });
+
+      const fraction = score - Math.floor(score); // last added fraction
+      if (fraction === 1) {
+        feedback.textContent = question.perfectResponse;
+      } else if (fraction >= 0.75) {
+        feedback.textContent = question.strongResponse;
+      } else if (fraction >= 0.4) {
+        feedback.textContent = question.decentResponse;
+      } else {
+        feedback.textContent = question.weakResponse;
+      }
+    }
+
+    // --- Results ---
+    function showResults() {
+      quizScreen.classList.remove("active");
+      resultsScreen.classList.add("active");
+
+      const maxScore = totalQuestions; // each question = 1 point max
+      const percent = Math.round((score / maxScore) * 100);
+
+      resultsVisual.innerHTML = "";
+      resultsText.innerHTML = "";
+
+      const svgNS = "http://www.w3.org/2000/svg";
+      const size = 160;
+      const radius = 70;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference * (1 - percent / 100);
+
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("width", size);
+      svg.setAttribute("height", size);
+
+      const bgCircle = document.createElementNS(svgNS, "circle");
+      bgCircle.setAttribute("cx", size / 2);
+      bgCircle.setAttribute("cy", size / 2);
+      bgCircle.setAttribute("r", radius);
+      bgCircle.setAttribute("stroke", "#333");
+      bgCircle.setAttribute("stroke-width", "14");
+      bgCircle.setAttribute("fill", "none");
+
+      const fgCircle = document.createElementNS(svgNS, "circle");
+      fgCircle.setAttribute("cx", size / 2);
+      fgCircle.setAttribute("cy", size / 2);
+      fgCircle.setAttribute("r", radius);
+      fgCircle.setAttribute("stroke", "url(#grad)");
+      fgCircle.setAttribute("stroke-width", "14");
+      fgCircle.setAttribute("fill", "none");
+      fgCircle.setAttribute("stroke-dasharray", circumference);
+      fgCircle.setAttribute("stroke-dashoffset", offset);
+      fgCircle.setAttribute("stroke-linecap", "round");
+
+      const defs = document.createElementNS(svgNS, "defs");
+      const linearGradient = document.createElementNS(svgNS, "linearGradient");
+      linearGradient.setAttribute("id", "grad");
+      linearGradient.setAttribute("x1", "0%");
+      linearGradient.setAttribute("y1", "0%");
+      linearGradient.setAttribute("x2", "100%");
+      linearGradient.setAttribute("y2", "0%");
+
+      const stop1 = document.createElementNS(svgNS, "stop");
+      stop1.setAttribute("offset", "0%");
+      stop1.setAttribute("stop-color", "#7b5cff");
+
+      const stop2 = document.createElementNS(svgNS, "stop");
+      stop2.setAttribute("offset", "100%");
+      stop2.setAttribute("stop-color", "#ff6ad5");
+
+      linearGradient.appendChild(stop1);
+      linearGradient.appendChild(stop2);
+      defs.appendChild(linearGradient);
+
+      const text = document.createElementNS(svgNS, "text");
+      text.setAttribute("x", size / 2);
+      text.setAttribute("y", size / 2);
+      text.textContent = `${percent}%`;
+
+      svg.appendChild(defs);
+      svg.appendChild(bgCircle);
+      svg.appendChild(fgCircle);
+      svg.appendChild(text);
+
+      const pieWrapper = document.createElement("div");
+      pieWrapper.classList.add("pie-chart");
+      pieWrapper.appendChild(svg);
+
+      resultsVisual.appendChild(pieWrapper);
+
+      let councilLine = "";
+      if (percent >= 90) {
+        councilLine = "The Council is speechless. Which is rare. They’re mostly just clapping.";
+      } else if (percent >= 70) {
+        councilLine = "The Council is deeply impressed — a few fuzzy edges, but the story is intact.";
+      } else if (percent >= 50) {
+        councilLine = "The Council smiles — you were present, even if the details got a little soft around the edges.";
+      } else {
+        councilLine = "The Council sighs dramatically, then pours another glass. Memory is a collaborative sport anyway.";
+      }
+
+      resultsText.innerHTML = `
+        You scored <strong>${score.toFixed(2)}</strong> out of <strong>${maxScore}</strong>.<br>
+        ${councilLine}
+      `;
+    }
   </script>
 </body>
 </html>
+
