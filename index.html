@@ -868,10 +868,33 @@ const birthdayScreen = document.getElementById("birthday-screen");
 const birthdayRestartBtn = document.getElementById("birthday-restart-btn");
 
 continueBtn.addEventListener("click", () => {
-  resultsScreen.style.display = "none";
+ resultsScreen.style.display = "none";
   birthdayScreen.style.display = "block";
   launchConfetti();
-  document.getElementById("confetti-audio").play();
+
+  const audio = document.getElementById("confetti-audio");
+  audio.volume = 0.5;   // start at 0.5
+  audio.loop = true;    // loop if user stays
+  audio.play();
+
+  // Phase 1: 0.5 → 0.7 over 2 seconds
+  let vol = 0.5;
+  const phase1 = setInterval(() => {
+    vol += 0.01;
+    audio.volume = vol;
+    if (vol >= 0.7) {
+      clearInterval(phase1);
+
+      // Phase 2: 0.7 → 1.0 over next 2 seconds
+      const phase2 = setInterval(() => {
+        vol += 0.01;
+        audio.volume = vol;
+        if (vol >= 1.0) {
+          clearInterval(phase2);
+        }
+      }, 50);
+    }
+  }, 50);  
 });
 
 birthdayRestartBtn.addEventListener("click", () => {
