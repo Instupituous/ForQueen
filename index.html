@@ -570,40 +570,41 @@ function showQuestion() {
 
   const q = quiz[currentQuestionIndex];
   questionText.textContent = q.question;
-// Stop any previous audio
-if (window.currentQuestionAudio) {
-  window.currentQuestionAudio.pause();
-  window.currentQuestionAudio.currentTime = 0;
-}
 
-// If this question has audio, fade it in
-if (questions[currentQuestion].audio) {
-  const audio = new Audio(questions[currentQuestion].audio);
-  window.currentQuestionAudio = audio;
+  // Stop any previous audio
+  if (window.currentQuestionAudio) {
+    window.currentQuestionAudio.pause();
+    window.currentQuestionAudio.currentTime = 0;
+  }
 
-  audio.volume = 0.5;
-  audio.loop = true;
-  audio.play();
+  // If this question has audio, fade it in
+  if (q.audio) {   // ← FIXED HERE
+    const audio = new Audio(q.audio);
+    window.currentQuestionAudio = audio;
 
-  // Phase 1: 0.5 → 0.7 over 2 seconds
-  let vol = 0.5;
-  const phase1 = setInterval(() => {
-    vol += 0.01;
-    audio.volume = vol;
-    if (vol >= 0.7) {
-      clearInterval(phase1);
+    audio.volume = 0.5;
+    audio.loop = true;
+    audio.play();
 
-      // Phase 2: 0.7 → 1.0 over next 2 seconds
-      const phase2 = setInterval(() => {
-        vol += 0.01;
-        audio.volume = vol;
-        if (vol >= 1.0) {
-          clearInterval(phase2);
-        }
-      }, 50);
-    }
-  }, 50);
-}
+    // Phase 1: 0.5 → 0.7 over 2 seconds
+    let vol = 0.5;
+    const phase1 = setInterval(() => {
+      vol += 0.01;
+      audio.volume = vol;
+      if (vol >= 0.7) {
+        clearInterval(phase1);
+
+        // Phase 2: 0.7 → 1.0 over next 2 seconds
+        const phase2 = setInterval(() => {
+          vol += 0.01;
+          audio.volume = vol;
+          if (vol >= 1.0) {
+            clearInterval(phase2);
+          }
+        }, 50);
+      }
+    }, 50);
+  }
 
   if (q.photo) {
     questionPhoto.src = q.photo;
