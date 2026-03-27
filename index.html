@@ -534,6 +534,8 @@
     const choicesContainer = document.getElementById("choices");
     const feedback = document.getElementById("feedback");
     let nextBtn = document.getElementById("next-btn");
+    const submitTimelineBtn = document.getElementById("submit-timeline-btn");
+
 
     let timelineState = null;
     let progressBarFill = document.getElementById("progress-fill");
@@ -808,7 +810,28 @@
         }
       });
     }
+// ⭐ ADD THIS ENTIRE BLOCK RIGHT HERE ⭐
+submitTimelineBtn.addEventListener("click", () => {
+  const userItems = Array.from(document.querySelectorAll(".timeline-item"));
+  const userOrder = userItems.map(item => item.dataset.value);
 
+  const correctOrder = quiz[currentQuestionIndex].correctOrder;
+  const totalItems = correctOrder.length;
+
+  let correctCount = 0;
+
+  for (let i = 0; i < totalItems; i++) {
+    if (userOrder[i] === correctOrder[i]) {
+      correctCount++;
+    }
+  }
+
+  // Fair weighting: timeline question = 1 point max
+  const timelineFraction = correctCount / totalItems;
+  score += timelineFraction;
+
+  showResults();
+});
 function showResults() {
   quizScreen.style.display = "none";
   resultsScreen.style.display = "block";
