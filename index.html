@@ -285,636 +285,572 @@
   <button id="birthday-restart-btn" class="btn">Replay the Quiz</button>
 </section>
   </div>
+<script>
+function shuffle(array) {
+  const arr = array.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
-  <script>
-    // Core screen elements
-const launchScreen = document.getElementById("launch-screen");
+let quiz = shuffle([
+  {
+    question: "What the heck does this guy want from Elisa Ellen, anyway?",
+    photo: "MeinxmasChair.jpg",
+    choices: ["Nothing","Can I buy a vowel?","Selfless Partnership","1.21 gigawatts"],
+    answerIndex: 2,
+    correctResponse: "Correct. The Council beams with approval — selfless partnership is the only acceptable answer.",
+    incorrectResponse: "Incorrect. The Council squints at the photo, then at you, then back at the photo. Try again, mortal."
+  },
+  {
+    question: "What is Elisa most likely to be doing when she enters her full Classy Broad form?",
+    choices: ["Sipping wine","Fixing her hair","Giving a side-eye","All of the above"],
+    answerIndex: 3,
+    correctResponse: "Correct. The Council of Classy Broads rises as Queen Elisa Ellen ascends.",
+    incorrectResponse: "Incorrect. The Council tilts its head in confusion, Elisa Ellen Mineck expected better."
+  },
+  {
+    question: "When she claims to be both an Iowa Hawkeyes fan and an Iowa State Cyclones fan during March Madness, what does that actually make her?",
+    photo: "IowaLogos.jpg",
+    choices: [
+      "A well-meaning spectator who just wants everyone to have a nice tournament",
+      "A diplomatic visionary attempting to unify a divided state",
+      "Someone trying to argue both sides of the case and hoping the judge won't notice",
+      "A full-blown walking contradiction under NCAA law"
+    ],
+    answerIndex: 3,
+    correctResponse: "Correct. A contradiction of such magnitude it could power a small Midwestern town.",
+    incorrectResponse: "Incorrect. The Council of Classy Broads lowers their readers in unison, deeply unimpressed by your reasoning."
+  },
+  {
+    question: "What is Elisa's signature classy move?",
+    choices: ["The hair tuck","The knowing smirk","The elegant eye roll","The 'I'm not mad, just disappointed'"],
+    answerIndex: 1,
+    correctResponse: "Correct. The smirk that could launch a thousand ships.",
+    incorrectResponse: "Incorrect. The Council smirks at YOU now."
+  },
+  {
+    question: "What drink transforms her into her final form?",
+    choices: ["Malbec","Champagne","Old Fashioned","Espresso martini"],
+    answerIndex: 0,
+    correctResponse: "Correct. Malbec unlocks the Baller Queen. Fun Fact: Malbec’s dark fruit and soft tannins create a slow‑building, sensual warmth many call aphrodisiac.",
+    incorrectResponse: "Incorrect. The Council swirls a glass of Malbec in judgment."
+  },
+  {
+    question: "Who is this dashing gentleman?",
+    photo: "NeilFallon.jpg",
+    choices: [
+      "Ragnar O'Sealegs, pirate laureate of questionable ballads",
+      "Grunk the Unwashed, inventor of yelling",
+      "Ye Ole Mossbeard, keeper of the forest's damp secrets",
+      "Neil Fallon of Clutch, prophet of riff-driven wisdom"
+    ],
+    answerIndex: 3,
+    correctResponse: "Correct. The Earth's rotation stabilizes; the Riff Prophets smile upon your wisdom.",
+    incorrectResponse: "Incorrect. A cosmic blues riff fades out in disappointment. Try again."
+  },
+  {
+    question: "What is Elisa's preferred level of chaos?",
+    choices: ["Low","Medium","High","Elegant chaos only"],
+    answerIndex: 3,
+    correctResponse: "Correct. She is chaos, but make it couture.",
+    incorrectResponse: "Incorrect. The Council adjusts its pearls in disapproval."
+  },
+  {
+    question: "Which of these best describes her laugh?",
+    choices: ["Cute giggle","Full-body laugh","Silent wheeze","The 'I can't breathe' laugh"],
+    answerIndex: 1,
+    correctResponse: "Correct. The laugh that could end wars.",
+    incorrectResponse: "Incorrect. The Council demands you study and know thyself."
+  },
+  {
+    question: "What is her most powerful weapon?",
+    choices: ["Her smile","Her confidence","Her sarcasm","Her entire existence"],
+    answerIndex: 3,
+    correctResponse: "Correct. Queen Elisa Ellen is a full arsenal.",
+    incorrectResponse: "Incorrect. The Council sighs, 'Her power is limitless.'"
+  },
+  {
+    question: "Which of these is she most likely to say?",
+    choices: ["'I'm fine.'","'NOPE!'","'You're ridiculous.'","'Both And.'"],
+    answerIndex: 1,
+    correctResponse: "Correct. Do not even try it.",
+    incorrectResponse: "Incorrect. The Council mutters, 'This was a gimme.'"
+  },
+  {
+    question: "Scientists have several theories about why celiac disease rates are rising. Which of the following are actually believed to contribute? (Check all that apply)",
+    choices: [
+      "Better awareness and improved testing",
+      "Gluten becoming sentient and holding a grudge",
+      "Environmental factors",
+      "Changes in gut microbiomes"
+    ],
+    correctAnswers: [0,2,3],
+    responses: {
+      "0,2,3": "Correct. A masterclass in gluten-free wisdom — you navigate this world with the grace of someone who’s read every label from here to Omaha.",
+      "0,2": "So close. Still, your instincts are sharp enough to impress even the most seasoned gluten-free veterans.",
+      "0,3": "Nearly there. Your gluten-detective skills remain top-tier, even when one clue slips by.",
+      "2,3": "A strong showing — truly. You reason like someone who has survived years of gluten-free snack negotiations.",
+      "3,2": "A strong showing — truly. You reason like someone who has survived years of gluten-free snack negotiations.",
+      "0": "Incorrect, but admirable. You’re thinking like a mom who can spot hidden gluten from across a crowded room.",
+      "2": "Incorrect, but the confidence is inspiring. You carry yourself like someone who has conquered the gluten-free birthday party circuit.",
+      "3": "Incorrect, but honestly? The intuition is impressive. You radiate the energy of someone who has stared down many a suspicious ingredient list.",
+      "0,1,2,3": "Incorrect — but the ambition is breathtaking. You answered like a woman who refuses to be intimidated by gluten, science, or chaos.",
+      "1": "Incorrect. Hilarious, but incorrect. Still, the imagination on display deserves a gluten-free medal.",
+      "0,1": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
+      "1,2": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
+      "1,3": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
+      "1,2,3": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance."
+    }
+  },
+  {
+    question: "Put these nights in the correct order — from the first spark to the latest chapter.",
+    type: "timeline",
+    items: [
+      { id: 1, label: "Nacho Libre", date: "Jul22" },
+      { id: 2, label: "Etch", date: "Jul26" },
+      { id: 3, label: "My return from Dallas", date: "Aug5" },
+      { id: 4, label: "Geist", date: "Aug8" },
+      { id: 5, label: "Louis CK", date: "Sep1" },
+      { id: 6, label: "Nine Inch Nails", date: "Sep6" },
+      { id: 7, label: "Bluebird on the Mountain", date: "Sep13" },
+      { id: 8, label: "1799 Kitchen (first time)", date: "Sep22" }
+    ],
+    correctOrder: [1,2,3,4,5,6,7,8],
+    perfectResponse: "The Council rises in unison — flawless sequencing, impeccable memory. You didn’t just live these nights, you archived them.",
+    strongResponse: "The Council whispers, “She’s got taste, memory, and impeccable sequencing.” A few slips, but the story is intact.",
+    decentResponse: "The Council adjusts their pearls — respectable recall, but some of these nights blurred together in the best possible way.",
+    weakResponse: "The Council gasps dramatically — “Were you even there for these moments?” Fortunately, the Council is merciful… and also a little drunk on Malbec."
+  },
+  {
+    question: "What is The Queen's hidden superpower?",
+    choices: ["Reading people instantly","Looking flawless effortlessly","Making you laugh","All of the above"],
+    answerIndex: 3,
+    correctResponse: "Correct. Queen Elisa Ellen is a multi-class hero.",
+    incorrectResponse: "Incorrect. The Council chuckles knowingly."
+  },
+  {
+    question: "Her style leans toward which of the following?",
+    choices: [
+      "Traditional — lace, rituals, and the approval of ancestors",
+      "Modern — sleek, efficient, and probably involving an app",
+      "A perfect blend of old-school charm and new-school convenience",
+      "Whatever option requires the least ironing"
+    ],
+    answerIndex: 3,
+    correctResponse: "Correct. A choice as refined as it is revealing — well played.",
+    incorrectResponse: "Incorrect. A bold guess, but not the vibe we were looking for."
+  },
+  {
+    question: "What is her go-to move when she's unimpressed?",
+    choices: ["The eyebrow raise","The slow blink","The head tilt","The 'really?' face"],
+    answerIndex: 3,
+    correctResponse: "Correct. If looks could kill.",
+    incorrectResponse: "Incorrect. The Council raises its collective eyebrow at YOU."
+  },
+  {
+    question: "Across all the places she lived — Cedar Rapids, Indianapolis, Canton, San Diego, and Nashville — what's one thing they almost all have in common when it comes to college sports?",
+    choices: [
+      "All are home to legendary NCAA powerhouses that dominate national championships",
+      "Most of her cities are NCAA towns, but one proudly flies the NAIA flag",
+      "Every city she lived in has a mascot that looks like it hasn't slept since 1978",
+      "Each stop on her journey is united by fierce rivalries in the mythical Interstate Corn Belt Classic"
+    ],
+    answerIndex: 1,
+    correctResponse: "Correct. Most of her cities roll with NCAA muscle, but Canton stands there in its NAIA overalls, smiling stubbornly.",
+    incorrectResponse: "Incorrect. The Council of Classy Broads channels their inner space-wizard: 'This is not the pattern you are looking for.'"
+  },
+  {
+    question: "Which of the following did NOT happen on March 27, 1973 — the day Queen Elisa Ellen arrived?",
+    choices: [
+      "Marlon Brando refused his Oscar, sending Sacheen Littlefeather in his place",
+      "Captain Floyd J. Thompson — longest-held Vietnam POW — was released",
+      "UCLA won the NCAA title behind Bill Walton's 44-point game",
+      "Queen Elizabeth II opened the new London Bridge"
+    ],
+    answerIndex: 2,
+    correctResponse: "Correct. The Council applauds your precision — Walton's 44-point rampage happened on March 26, not the 27th.",
+    incorrectResponse: "Incorrect. The Council exchanges a slow, disappointed side-eye that could curdle milk."
+  },
+  {
+    question: "The Council presents Exhibit A. After which of our escapades was this message sent?",
+    photo: "TextPostEtch.jpg",
+    choices: [
+      "Following our date at Etch",
+      "Following our Nacho Libre date",
+      "Following our Geist date",
+      "Following my return from Baumann's"
+    ],
+    answerIndex: 0,
+    correctResponse: "Correct. The Council nods — Etch was the spark behind that message.",
+    incorrectResponse: "Incorrect. The Council arches a brow. 'Wow... guess that moment didn’t mean much to you.'"
+  },
+  {
+    question: "Who is in this photo?",
+    photo: "JuliaPlotting.jpg",
+    choices: [
+      "An evil succubus mischievously plotting to steal your soul",
+      "The person who steals Steve's Titans seat whenever Elisa decides the stadium needs better energy",
+      "Your wonderful, supportive, and loving daughter Julia",
+      "A creature who haunts youth sports fields demanding gluten-free options that never exist"
+    ],
+    answerIndex: 2,
+    correctResponse: "Correct! Julia is the star of the show — even in shadow form.",
+    incorrectResponse: "Incorrect! But honestly, with this photo, any of those answers felt possible."
+  },
+  {
+    question: "What is her preferred way to win an argument?",
+    choices: ["Logic","Sarcasm","Being right","All of the above"],
+    answerIndex: 3,
+    correctResponse: "Correct. Queen Elisa Mineck wins by existing.",
+    incorrectResponse: "Incorrect. The Council rules in her favor anyway."
+  },
+  {
+    question: "What is the correct title for Elisa at the end of this quiz?",
+    choices: [
+      "Squeezy Poser Metalhead Elisa",
+      "Elisa Ellen the Sporty Classy Broad",
+      "Baller Queen Mineck",
+      "All of the above"
+    ],
+    answerIndex: 3,
+    correctResponse: "Correct. Bow before her.",
+    incorrectResponse: "Incorrect. The Council gasps dramatically."
+  }
+]);
+
+/* ---------------------------------------------------------
+   CORE QUIZ STATE
+--------------------------------------------------------- */
+let currentQuestionIndex = 0;
+let score = 0;
+let hasAnswered = false;
+
+const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultsScreen = document.getElementById("results-screen");
-const birthdayScreen = document.getElementById("birthday-screen");
 
-// Buttons
-const startBtn = document.getElementById("start-btn");
-const continueBtn = document.getElementById("continue-btn");
-const birthdayRestartBtn = document.getElementById("birthday-restart-btn");
-
-// Quiz elements
 const questionText = document.getElementById("question-text");
-const answersContainer = document.getElementById("answers-container");
-const scoreText = document.getElementById("score-text");
-const verdictText = document.getElementById("verdict-text");
-const pieFill = document.getElementById("pie-fill");
-const piePercent = document.getElementById("pie-percent");
+const questionPhoto = document.getElementById("question-photo");
+const choicesContainer = document.getElementById("choices");
+const feedback = document.getElementById("feedback");
+let nextBtn = document.getElementById("next-btn");
+let timelineState = null;
+let progressBarFill = document.getElementById("progress-fill");
 
-    let quiz = shuffle([
-      {
-        question: "What the heck does this guy want from Elisa Ellen, anyway?",
-        photo: "MeinxmasChair.jpg",
-        choices: ["Nothing","Can I buy a vowel?","Selfless Partnership","1.21 gigawatts"],
-        answerIndex: 2,
-        correctResponse: "Correct. The Council beams with approval — selfless partnership is the only acceptable answer.",
-        incorrectResponse: "Incorrect. The Council squints at the photo, then at you, then back at the photo. Try again, mortal."
-      },
-      {
-        question: "What is Elisa most likely to be doing when she enters her full Classy Broad form?",
-        choices: ["Sipping wine","Fixing her hair","Giving a side-eye","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. The Council of Classy Broads rises as Queen Elisa Ellen ascends.",
-        incorrectResponse: "Incorrect. The Council tilts its head in confusion, Elisa Ellen Mineck expected better."
-      },
-      {
-        question: "When she claims to be both an Iowa Hawkeyes fan and an Iowa State Cyclones fan during March Madness, what does that actually make her?",
-        photo: "IowaLogos.jpg",
-        choices: [
-          "A well-meaning spectator who just wants everyone to have a nice tournament",
-          "A diplomatic visionary attempting to unify a divided state",
-          "Someone trying to argue both sides of the case and hoping the judge won't notice",
-          "A full-blown walking contradiction under NCAA law"
-        ],
-        answerIndex: 3,
-        correctResponse: "Correct. A contradiction of such magnitude it could power a small Midwestern town.",
-        incorrectResponse: "Incorrect. The Council of Classy Broads lowers their readers in unison, deeply unimpressed by your reasoning."
-      },
-      {
-        question: "What is Elisa's signature classy move?",
-        choices: ["The hair tuck","The knowing smirk","The elegant eye roll","The 'I'm not mad, just disappointed'"],
-        answerIndex: 1,
-        correctResponse: "Correct. The smirk that could launch a thousand ships.",
-        incorrectResponse: "Incorrect. The Council smirks at YOU now."
-      },
-      {
-        question: "What drink transforms her into her final form?",
-        choices: ["Malbec","Champagne","Old Fashioned","Espresso martini"],
-        answerIndex: 0,
-        correctResponse: "Correct. Malbec unlocks the Baller Queen. Fun Fact: Malbec’s dark fruit and soft tannins create a slow‑building, sensual warmth many call aphrodisiac.",
-        incorrectResponse: "Incorrect. The Council swirls a glass of Malbec in judgment."
-      },
-      {
-        question: "Who is this dashing gentleman?",
-        photo: "NeilFallon.jpg",
-        choices: [
-          "Ragnar O'Sealegs, pirate laureate of questionable ballads",
-          "Grunk the Unwashed, inventor of yelling",
-          "Ye Ole Mossbeard, keeper of the forest's damp secrets",
-          "Neil Fallon of Clutch, prophet of riff-driven wisdom"
-        ],
-        answerIndex: 3,
-        correctResponse: "Correct. The Earth's rotation stabilizes; the Riff Prophets smile upon your wisdom.",
-        incorrectResponse: "Incorrect. A cosmic blues riff fades out in disappointment. Try again."
-      },
-      {
-        question: "What is Elisa's preferred level of chaos?",
-        choices: ["Low","Medium","High","Elegant chaos only"],
-        answerIndex: 3,
-        correctResponse: "Correct. She is chaos, but make it couture.",
-        incorrectResponse: "Incorrect. The Council adjusts its pearls in disapproval."
-      },
-      {
-        question: "Which of these best describes her laugh?",
-        choices: ["Cute giggle","Full-body laugh","Silent wheeze","The 'I can't breathe' laugh"],
-        answerIndex: 1,
-        correctResponse: "Correct. The laugh that could end wars.",
-        incorrectResponse: "Incorrect. The Council demands you study and know thyself."
-      },
-      {
-        question: "What is her most powerful weapon?",
-        choices: ["Her smile","Her confidence","Her sarcasm","Her entire existence"],
-        answerIndex: 3,
-        correctResponse: "Correct. Queen Elisa Ellen is a full arsenal.",
-        incorrectResponse: "Incorrect. The Council sighs, 'Her power is limitless.'"
-      },
-      {
-        question: "Which of these is she most likely to say?",
-        choices: ["'I'm fine.'","'NOPE!'","'You're ridiculous.'","'Both And.'"],
-        answerIndex: 1,
-        correctResponse: "Correct. Do not even try it.",
-        incorrectResponse: "Incorrect. The Council mutters, 'This was a gimme.'"
-      },
-      {
-        question: "Scientists have several theories about why celiac disease rates are rising. Which of the following are actually believed to contribute? (Check all that apply)",
-        choices: [
-          "Better awareness and improved testing",
-          "Gluten becoming sentient and holding a grudge",
-          "Environmental factors",
-          "Changes in gut microbiomes"
-        ],
-        correctAnswers: [0,2,3],
-        responses: {
-          "0,2,3": "Correct. A masterclass in gluten-free wisdom — you navigate this world with the grace of someone who’s read every label from here to Omaha.",
-          "0,2": "So close. Still, your instincts are sharp enough to impress even the most seasoned gluten-free veterans.",
-          "0,3": "Nearly there. Your gluten-detective skills remain top-tier, even when one clue slips by.",
-          "2,3": "A strong showing — truly. You reason like someone who has survived years of gluten-free snack negotiations.",
-          "3,2": "A strong showing — truly. You reason like someone who has survived years of gluten-free snack negotiations.",
-          "0": "Incorrect, but admirable. You’re thinking like a mom who can spot hidden gluten from across a crowded room.",
-          "2": "Incorrect, but the confidence is inspiring. You carry yourself like someone who has conquered the gluten-free birthday party circuit.",
-          "3": "Incorrect, but honestly? The intuition is impressive. You radiate the energy of someone who has stared down many a suspicious ingredient list.",
-          "0,1,2,3": "Incorrect — but the ambition is breathtaking. You answered like a woman who refuses to be intimidated by gluten, science, or chaos.",
-          "1": "Incorrect. Hilarious, but incorrect. Still, the imagination on display deserves a gluten-free medal.",
-          "0,1": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
-          "1,2": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
-          "1,3": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance.",
-          "1,2,3": "Incorrect — but the creativity is undeniable. You navigate this like someone who has mastered both humor and hidden-gluten reconnaissance."
-        }
-      },
-      {
-        question: "Put these nights in the correct order — from the first spark to the latest chapter.",
-        type: "timeline",
-        items: [
-          { id: 1, label: "Nacho Libre", date: "Jul22" },
-          { id: 2, label: "Etch", date: "Jul26" },
-          { id: 3, label: "My return from Dallas", date: "Aug5" },
-          { id: 4, label: "Geist", date: "Aug8" },
-          { id: 5, label: "Louis CK", date: "Sep1" },
-          { id: 6, label: "Nine Inch Nails", date: "Sep6" },
-          { id: 7, label: "Bluebird on the Mountain", date: "Sep13" },
-          { id: 8, label: "1799 Kitchen (first time)", date: "Sep22" }
-        ],
-        correctOrder: [1,2,3,4,5,6,7,8],
-        perfectResponse: "The Council rises in unison — flawless sequencing, impeccable memory. You didn’t just live these nights, you archived them.",
-        strongResponse: "The Council whispers, “She’s got taste, memory, and impeccable sequencing.” A few slips, but the story is intact.",
-        decentResponse: "The Council adjusts their pearls — respectable recall, but some of these nights blurred together in the best possible way.",
-        weakResponse: "The Council gasps dramatically — “Were you even there for these moments?” Fortunately, the Council is merciful… and also a little drunk on Malbec."
-      },
-      {
-        question: "What is The Queen's hidden superpower?",
-        choices: ["Reading people instantly","Looking flawless effortlessly","Making you laugh","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. Queen Elisa Ellen is a multi-class hero.",
-        incorrectResponse: "Incorrect. The Council chuckles knowingly."
-      },
-      {
-        question: "Her style leans toward which of the following?",
-        choices: [
-          "Traditional — lace, rituals, and the approval of ancestors",
-          "Modern — sleek, efficient, and probably involving an app",
-          "A perfect blend of old-school charm and new-school convenience",
-          "Whatever option requires the least ironing"
-        ],
-        answerIndex: 3,
-        correctResponse: "Correct. A choice as refined as it is revealing — well played.",
-        incorrectResponse: "Incorrect. A bold guess, but not the vibe we were looking for."
-      },
-      {
-        question: "What is her go-to move when she's unimpressed?",
-        choices: ["The eyebrow raise","The slow blink","The head tilt","The 'really?' face"],
-        answerIndex: 3,
-        correctResponse: "Correct. If looks could kill.",
-        incorrectResponse: "Incorrect. The Council raises its collective eyebrow at YOU."
-      },
-      {
-        question: "Across all the places she lived — Cedar Rapids, Indianapolis, Canton, San Diego, and Nashville — what's one thing they almost all have in common when it comes to college sports?",
-        choices: [
-          "All are home to legendary NCAA powerhouses that dominate national championships",
-          "Most of her cities are NCAA towns, but one proudly flies the NAIA flag",
-          "Every city she lived in has a mascot that looks like it hasn't slept since 1978",
-          "Each stop on her journey is united by fierce rivalries in the mythical Interstate Corn Belt Classic"
-        ],
-        answerIndex: 1,
-        correctResponse: "Correct. Most of her cities roll with NCAA muscle, but Canton stands there in its NAIA overalls, smiling stubbornly.",
-        incorrectResponse: "Incorrect. The Council of Classy Broads channels their inner space-wizard: 'This is not the pattern you are looking for.'"
-      },
-      {
-        question: "Which of the following did NOT happen on March 27, 1973 — the day Queen Elisa Ellen arrived?",
-        choices: [
-          "Marlon Brando refused his Oscar, sending Sacheen Littlefeather in his place",
-          "Captain Floyd J. Thompson — longest-held Vietnam POW — was released",
-          "UCLA won the NCAA title behind Bill Walton's 44-point game",
-          "Queen Elizabeth II opened the new London Bridge"
-        ],
-        answerIndex: 2,
-        correctResponse: "Correct. The Council applauds your precision — Walton's 44-point rampage happened on March 26, not the 27th.",
-        incorrectResponse: "Incorrect. The Council exchanges a slow, disappointed side-eye that could curdle milk."
-      },
-      {
-        question: "The Council presents Exhibit A. After which of our escapades was this message sent?",
-        photo: "TextPostEtch.jpg",
-        choices: [
-          "Following our date at Etch",
-          "Following our Nacho Libre date",
-          "Following our Geist date",
-          "Following my return from Baumann's"
-        ],
-        answerIndex: 0,
-        correctResponse: "Correct. The Council nods — Etch was the spark behind that message.",
-        incorrectResponse: "Incorrect. The Council arches a brow. 'Wow... guess that moment didn’t mean much to you.'"
-      },
-      {
-        question: "Who is in this photo?",
-        photo: "JuliaPlotting.jpg",
-        choices: [
-          "An evil succubus mischievously plotting to steal your soul",
-          "The person who steals Steve's Titans seat whenever Elisa decides the stadium needs better energy",
-          "Your wonderful, supportive, and loving daughter Julia",
-          "A creature who haunts youth sports fields demanding gluten-free options that never exist"
-        ],
-        answerIndex: 2,
-        correctResponse: "Correct! Julia is the star of the show — even in shadow form.",
-        incorrectResponse: "Incorrect! But honestly, with this photo, any of those answers felt possible."
-      },
-      {
-        question: "What is her preferred way to win an argument?",
-        choices: ["Logic","Sarcasm","Being right","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. Queen Elisa Mineck wins by existing.",
-        incorrectResponse: "Incorrect. The Council rules in her favor anyway."
-      },
-      {
-        question: "What is the correct title for Elisa at the end of this quiz?",
-        choices: ["Squeezy Poser Metalhead Elisa","Elisa Ellen the Sporty Classy Broad","Baller Queen Mineck","All of the above"],
-        answerIndex: 3,
-        correctResponse: "Correct. Bow before her.",
-        incorrectResponse: "Incorrect. The Council gasps dramatically."
-      }
-    ]);
+document.getElementById("start-btn").addEventListener("click", () => {
+  startScreen.style.display = "none";
+  quizScreen.style.display = "block";
+  updateProgressBar();
+  showQuestion();
+});
 
-    /* ---------------------------------------------------------
-       CORE QUIZ STATE
-    --------------------------------------------------------- */
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let hasAnswered = false;
+function updateProgressBar() {
+  const progress = (currentQuestionIndex / quiz.length) * 100;
+  progressBarFill.style.width = progress + "%";
+}
 
-    const startScreen = document.getElementById("start-screen");
-    const quizScreen = document.getElementById("quiz-screen");
-    const resultsScreen = document.getElementById("results-screen");
+function showQuestion() {
+  hasAnswered = false;
+  feedback.textContent = "";
+  choicesContainer.innerHTML = "";
+  nextBtn.style.display = "none";
 
-    const questionText = document.getElementById("question-text");
-    const questionPhoto = document.getElementById("question-photo");
-    const choicesContainer = document.getElementById("choices");
-    const feedback = document.getElementById("feedback");
-    let nextBtn = document.getElementById("next-btn");
+  const q = quiz[currentQuestionIndex];
+  questionText.textContent = q.question;
 
-    let timelineState = null;
-    let progressBarFill = document.getElementById("progress-fill");
+  if (q.photo) {
+    questionPhoto.src = q.photo;
+    questionPhoto.style.display = "block";
+  } else {
+    questionPhoto.style.display = "none";
+  }
 
-    document.getElementById("start-btn").addEventListener("click", () => {
-      startScreen.style.display = "none";
-      quizScreen.style.display = "block";
-      updateProgressBar();
-      showQuestion();
-    });
+  if (q.type === "timeline") {
+    renderTimeline(q);
+  } else if (Array.isArray(q.correctAnswers)) {
+    renderMultiSelect(q);
+  } else {
+    renderSingleSelect(q);
+  }
 
-    document.getElementById("restart-btn").addEventListener("click", () => {
-      location.reload();
-    });
+  updateProgressBar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-    function shuffle(array) {
-      const arr = array.slice();
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
+function renderSingleSelect(q) {
+  q.choices.forEach((choiceText, index) => {
+    const btn = document.createElement("div");
+    btn.className = "choice";
+    btn.textContent = choiceText;
+    btn.addEventListener("click", () => handleSingleAnswer(index));
+    choicesContainer.appendChild(btn);
+  });
+}
 
-    function updateProgressBar() {
-      const progress = (currentQuestionIndex / quiz.length) * 100;
-      progressBarFill.style.width = progress + "%";
-    }
+function handleSingleAnswer(selectedIndex) {
+  if (hasAnswered) return;
+  hasAnswered = true;
 
-    function showQuestion() {
-      hasAnswered = false;
-      feedback.textContent = "";
-      choicesContainer.innerHTML = "";
-      nextBtn.style.display = "none";
+  const q = quiz[currentQuestionIndex];
+  const buttons = Array.from(document.getElementsByClassName("choice"));
 
-      const q = quiz[currentQuestionIndex];
-      questionText.textContent = q.question;
+  buttons.forEach((btn, index) => {
+    if (index === q.answerIndex) btn.classList.add("correct");
+    if (index === selectedIndex && index !== q.answerIndex) btn.classList.add("incorrect");
+  });
 
-      if (q.photo) {
-        questionPhoto.src = q.photo;
-        questionPhoto.style.display = "block";
-      } else {
-        questionPhoto.style.display = "none";
-      }
+  if (selectedIndex === q.answerIndex) {
+    score++;
+    feedback.textContent = q.correctResponse;
+  } else {
+    feedback.textContent = q.incorrectResponse;
+  }
 
-      if (q.type === "timeline") {
-        renderTimeline(q);
-      } else if (Array.isArray(q.correctAnswers)) {
-        renderMultiSelect(q);
-      } else {
-        renderSingleSelect(q);
-      }
+  setupNextButton();
+}
 
-      updateProgressBar();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-    function renderSingleSelect(q) {
-      q.choices.forEach((choiceText, index) => {
-        const btn = document.createElement("div");
-        btn.className = "choice";
-        btn.textContent = choiceText;
-        btn.addEventListener("click", () => handleSingleAnswer(index));
-        choicesContainer.appendChild(btn);
-      });
-    }
+function renderMultiSelect(q) {
+  q.choices.forEach((choiceText, index) => {
+    const label = document.createElement("label");
+    label.className = "choice";
 
-    function handleSingleAnswer(selectedIndex) {
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = index;
+
+    const span = document.createElement("span");
+    span.textContent = choiceText;
+
+    label.appendChild(checkbox);
+    label.appendChild(span);
+    choicesContainer.appendChild(label);
+  });
+
+  nextBtn.textContent = "Submit";
+  nextBtn.style.display = "inline-block";
+
+  const newNext = nextBtn.cloneNode(true);
+  nextBtn.parentNode.replaceChild(newNext, nextBtn);
+  nextBtn = newNext;
+
+  nextBtn.addEventListener("click", () => handleMultiAnswer(q));
+}
+
+function handleMultiAnswer(q) {
+  if (hasAnswered) return;
+  hasAnswered = true;
+
+  const selected = Array.from(
+    document.querySelectorAll("#choices input[type='checkbox']:checked")
+  ).map(cb => parseInt(cb.value));
+
+  const key = selected.sort((a,b) => a - b).join(",");
+  const correctKey = q.correctAnswers.slice().sort((a,b) => a - b).join(",");
+  const response = q.responses[key] || "Interesting choice.";
+
+  if (key === correctKey) score++;
+  feedback.textContent = response;
+
+  setupNextButton();
+}
+
+/* ---------------------------------------------------------
+   TIMELINE QUESTION
+--------------------------------------------------------- */
+function renderTimeline(q) {
+  timelineState = {
+    question: q,
+    items: shuffle(q.items.slice())
+  };
+
+  renderTimelineList(false);
+
+  nextBtn.textContent = "Submit";
+  nextBtn.style.display = "inline-block";
+
+  const newNext = nextBtn.cloneNode(true);
+  nextBtn.parentNode.replaceChild(newNext, nextBtn);
+  nextBtn = newNext;
+
+  nextBtn.addEventListener("click", () => handleTimelineAnswer());
+}
+
+function renderTimelineList(showDates = false) {
+  choicesContainer.innerHTML = "";
+  const list = document.createElement("div");
+  list.className = "timeline-list";
+
+  timelineState.items.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "timeline-item";
+
+    const label = document.createElement("div");
+    label.className = "timeline-label";
+    label.textContent = showDates ? `${item.label} — ${item.date}` : item.label;
+
+    const controls = document.createElement("div");
+    controls.className = "timeline-controls";
+
+    const upBtn = document.createElement("button");
+    upBtn.type = "button";
+    upBtn.className = "timeline-btn";
+    upBtn.textContent = "↑";
+    upBtn.addEventListener("click", () => {
       if (hasAnswered) return;
-      hasAnswered = true;
-
-      const q = quiz[currentQuestionIndex];
-      const buttons = Array.from(document.getElementsByClassName("choice"));
-
-      buttons.forEach((btn, index) => {
-        if (index === q.answerIndex) btn.classList.add("correct");
-        if (index === selectedIndex && index !== q.answerIndex) btn.classList.add("incorrect");
-      });
-
-      if (selectedIndex === q.answerIndex) {
-        score++;
-        feedback.textContent = q.correctResponse;
-      } else {
-        feedback.textContent = q.incorrectResponse;
-      }
-
-      setupNextButton();
-    }
-
-    function renderMultiSelect(q) {
-      q.choices.forEach((choiceText, index) => {
-        const label = document.createElement("label");
-        label.className = "choice";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.value = index;
-
-        const span = document.createElement("span");
-        span.textContent = choiceText;
-
-        label.appendChild(checkbox);
-        label.appendChild(span);
-        choicesContainer.appendChild(label);
-      });
-
-      nextBtn.textContent = "Submit";
-      nextBtn.style.display = "inline-block";
-
-      const newNext = nextBtn.cloneNode(true);
-      nextBtn.parentNode.replaceChild(newNext, nextBtn);
-      nextBtn = newNext;
-
-      nextBtn.addEventListener("click", () => handleMultiAnswer(q));
-    }
-
-    function handleMultiAnswer(q) {
-      if (hasAnswered) return;
-      hasAnswered = true;
-
-      const selected = Array.from(
-        document.querySelectorAll("#choices input[type='checkbox']:checked")
-      ).map(cb => parseInt(cb.value));
-
-      const key = selected.sort((a,b) => a - b).join(",");
-      const correctKey = q.correctAnswers.slice().sort((a,b) => a - b).join(",");
-
-      const response = q.responses[key] || "Interesting choice.";
-
-      if (key === correctKey) score++;
-
-      feedback.textContent = response;
-
-      setupNextButton();
-    }
-
-    /* ---------------------------------------------------------
-       TIMELINE QUESTION (UP/DOWN ARROWS)
-    --------------------------------------------------------- */
-    function renderTimeline(q) {
-      timelineState = {
-        question: q,
-        items: shuffle(q.items.slice())
-      };
-
+      if (index === 0) return;
+      const items = timelineState.items;
+      [items[index - 1], items[index]] = [items[index], items[index - 1]];
       renderTimelineList(false);
+    });
 
-      nextBtn.textContent = "Submit";
-      nextBtn.style.display = "inline-block";
-
-      const newNext = nextBtn.cloneNode(true);
-      nextBtn.parentNode.replaceChild(newNext, nextBtn);
-      nextBtn = newNext;
-
-      nextBtn.addEventListener("click", () => handleTimelineAnswer());
-    }
-
-    function renderTimelineList(showDates = false) {
-      choicesContainer.innerHTML = "";
-
-      const list = document.createElement("div");
-      list.className = "timeline-list";
-
-      timelineState.items.forEach((item, index) => {
-        const row = document.createElement("div");
-        row.className = "timeline-item";
-
-        const label = document.createElement("div");
-        label.className = "timeline-label";
-        label.textContent = showDates ? `${item.label} — ${item.date}` : item.label;
-
-        const controls = document.createElement("div");
-        controls.className = "timeline-controls";
-
-        const upBtn = document.createElement("button");
-        upBtn.type = "button";
-        upBtn.className = "timeline-btn";
-        upBtn.textContent = "↑";
-        upBtn.addEventListener("click", () => {
-          if (hasAnswered) return;
-          if (index === 0) return;
-          const items = timelineState.items;
-          [items[index - 1], items[index]] = [items[index], items[index - 1]];
-          renderTimelineList(false);
-        });
-
-        const downBtn = document.createElement("button");
-        downBtn.type = "button";
-        downBtn.className = "timeline-btn";
-        downBtn.textContent = "↓";
-        downBtn.addEventListener("click", () => {
-          if (hasAnswered) return;
-          const items = timelineState.items;
-          if (index === items.length - 1) return;
-          [items[index + 1], items[index]] = [items[index], items[index + 1]];
-          renderTimelineList(false);
-        });
-
-        controls.appendChild(upBtn);
-        controls.appendChild(downBtn);
-
-        row.appendChild(label);
-        row.appendChild(controls);
-        list.appendChild(row);
-      });
-
-      choicesContainer.appendChild(list);
-    }
-
-    function handleTimelineAnswer() {
+    const downBtn = document.createElement("button");
+    downBtn.type = "button";
+    downBtn.className = "timeline-btn";
+    downBtn.textContent = "↓";
+    downBtn.addEventListener("click", () => {
       if (hasAnswered) return;
-      hasAnswered = true;
+      const items = timelineState.items;
+      if (index === items.length - 1) return;
+      [items[index + 1], items[index]] = [items[index], items[index + 1]];
+      renderTimelineList(false);
+    });
 
-      const q = timelineState.question;
-      const currentIds = timelineState.items.map(item => item.id);
-      const correctIds = q.correctOrder;
+    controls.appendChild(upBtn);
+    controls.appendChild(downBtn);
+    row.appendChild(label);
+    row.appendChild(controls);
+    list.appendChild(row);
+  });
 
-      let correctPositions = 0;
-      for (let i = 0; i < correctIds.length; i++) {
-        if (currentIds[i] === correctIds[i]) correctPositions++;
-      }
+  choicesContainer.appendChild(list);
+}
 
-      const percent = Math.round((correctPositions / correctIds.length) * 100);
+function handleTimelineAnswer() {
+  if (hasAnswered) return;
+  hasAnswered = true;
 
-      let message;
-      if (percent === 100) {
-        message = q.perfectResponse;
-        score++;
-      } else if (percent >= 75) {
-        message = q.strongResponse;
-      } else if (percent >= 50) {
-        message = q.decentResponse;
-      } else {
-        message = q.weakResponse;
-      }
+  const q = timelineState.question;
+  const currentIds = timelineState.items.map(item => item.id);
+  const correctIds = q.correctOrder;
 
-      feedback.textContent =
-        `${message}\n(${correctPositions} of ${correctIds.length} in the exact right spot — ${percent}% correct.)`;
+  let correctPositions = 0;
+  for (let i = 0; i < correctIds.length; i++) {
+    if (currentIds[i] === correctIds[i]) correctPositions++;
+  }
 
-      const idToItem = {};
-      timelineState.items.forEach(item => {
-        idToItem[item.id] = item;
-      });
-      timelineState.items = correctIds.map(id => idToItem[id]);
+  const percent = Math.round((correctPositions / correctIds.length) * 100);
+  let message;
 
-      renderTimelineList(true);
+  if (percent === 100) {
+    message = q.perfectResponse;
+    score++;
+  } else if (percent >= 75) {
+    message = q.strongResponse;
+  } else if (percent >= 50) {
+    message = q.decentResponse;
+  } else {
+    message = q.weakResponse;
+  }
 
-      const controls = document.querySelectorAll(".timeline-controls");
-      controls.forEach(c => c.classList.add("hidden"));
+  feedback.textContent = `${message}\n(${correctPositions} of ${correctIds.length} in the exact right spot — ${percent}% correct.)`;
 
-      setupNextButton();
-    }
-    /* ---------------------------------------------------------
-       NEXT BUTTON HANDLING
-    --------------------------------------------------------- */
-    function setupNextButton() {
-      nextBtn.textContent =
-        currentQuestionIndex === quiz.length - 1 ? "See Results" : "Next";
-      nextBtn.style.display = "inline-block";
+  const idToItem = {};
+  timelineState.items.forEach(item => { idToItem[item.id] = item; });
+  timelineState.items = correctIds.map(id => idToItem[id]);
 
-      const newNext = nextBtn.cloneNode(true);
-      nextBtn.parentNode.replaceChild(newNext, nextBtn);
-      nextBtn = newNext;
+  renderTimelineList(true);
 
-      nextBtn.addEventListener("click", () => {
-        if (currentQuestionIndex < quiz.length - 1) {
-          currentQuestionIndex++;
-          showQuestion();
-        } else {
-          showResults();
-        }
-      });
-    }
+  const controls = document.querySelectorAll(".timeline-controls");
+  controls.forEach(c => c.classList.add("hidden"));
 
-    /* ---------------------------------------------------------
-       RESULTS SCREEN
-    --------------------------------------------------------- */
-    function showResults() {
-      quizScreen.style.display = "none";
-      resultsScreen.style.display = "block";
-
-      const percent = Math.round((score / quiz.length) * 100);
-
-      animatePieChart(percent);
-
-      const verdictText = document.getElementById("verdict-text");
-      verdictText.textContent = getCouncilVerdict(percent);
-
-      const scoreText = document.getElementById("score-text");
-      scoreText.textContent = `You scored ${score} out of ${quiz.length}.`;
-    }
-
-    /* ---------------------------------------------------------
-       PIE CHART ANIMATION
-    --------------------------------------------------------- */
-    function animatePieChart(percent) {
-      const circle = document.getElementById("pie-fill");
-      const text = document.getElementById("pie-percent");
-
-      const radius = 45;
-      const circumference = 2 * Math.PI * radius;
-      const offset = circumference - (percent / 100) * circumference;
-
-      circle.style.transition = "stroke-dashoffset 1s ease";
-      circle.style.strokeDashoffset = offset;
-
-      let current = 0;
-      const step = Math.ceil(percent / 30);
-
-      const interval = setInterval(() => {
-        current += step;
-        if (current >= percent) {
-          current = percent;
-          clearInterval(interval);
-        }
-        text.textContent = current + "%";
-      }, 30);
-    }
-
-    /* ---------------------------------------------------------
-       COUNCIL VERDICT LOGIC
-    --------------------------------------------------------- */
-    function getCouncilVerdict(percent) {
-      if (percent >= 90) {
-        return "The Council rises in awe — your mastery of Queen Elisa Ellen is unquestionable.";
-      }
-      if (percent >= 75) {
-        return "The Council nods approvingly — you know her well, though a few details slipped past.";
-      }
-      if (percent >= 50) {
-        return "The Council adjusts their pearls — respectable, but you may need remedial Queen Studies.";
-      }
-      if (percent >= 25) {
-        return "The Council sighs dramatically — were you even paying attention during these moments?";
-      }
-      return "The Council faints. Truly. A performance so chaotic it defies classification.";
-    }
-    /* ---------------------------------------------------------
-   BIRTHDAY SCREEN TRANSITION + CONFETTI
---------------------------------------------------------- */
-const continueBtn = document.getElementById("continue-btn");
-const birthdayScreen = document.getElementById("birthday-screen");
-const birthdayRestartBtn = document.getElementById("birthday-restart-btn");
-
-continueBtn.addEventListener("click", () => {
-  resultsScreen.style.display = "none";
-  birthdayScreen.style.display = "block";
-  launchConfetti();
-});
-
-birthdayRestartBtn.addEventListener("click", () => {
-  location.reload();
-});
+  setupNextButton();
+}
 
 /* ---------------------------------------------------------
-   CONFETTI ANIMATION (lightweight, no libraries)
---------------------------------------------------------- /* ---------------------------------------------------------
-   BIRTHDAY SCREEN TRANSITION
+   NEXT BUTTON HANDLING
 --------------------------------------------------------- */
-const continueBtn = document.getElementById("continue-btn");
-const birthdayScreen = document.getElementById("birthday-screen");
-const birthdayRestartBtn = document.getElementById("birthday-restart-btn");
+function setupNextButton() {
+  nextBtn.textContent = currentQuestionIndex === quiz.length - 1 ? "See Results" : "Next";
+  nextBtn.style.display = "inline-block";
 
-continueBtn.addEventListener("click", () => {
-  resultsScreen.style.display = "none";
-  birthdayScreen.style.display = "block";
-  launchConfetti();
-});
+  const newNext = nextBtn.cloneNode(true);
+  nextBtn.parentNode.replaceChild(newNext, nextBtn);
+  nextBtn = newNext;
 
-birthdayRestartBtn.addEventListener("click", () => {
-  location.reload();
-});
-*/
+  nextBtn.addEventListener("click", () => {
+    if (currentQuestionIndex < quiz.length - 1) {
+      currentQuestionIndex++;
+      showQuestion();
+    } else {
+      showResults();
+    }
+  });
+}
+
+/* ---------------------------------------------------------
+   RESULTS SCREEN
+--------------------------------------------------------- */
+function showResults() {
+  quizScreen.style.display = "none";
+  resultsScreen.style.display = "block";
+
+  const percent = Math.round((score / quiz.length) * 100);
+  animatePieChart(percent);
+
+  const verdictText = document.getElementById("verdict-text");
+  verdictText.textContent = getCouncilVerdict(percent);
+
+  const scoreText = document.getElementById("score-text");
+  scoreText.textContent = `You scored ${score} out of ${quiz.length}.`;
+}
+
+/* ---------------------------------------------------------
+   PIE CHART ANIMATION
+--------------------------------------------------------- */
+function animatePieChart(percent) {
+  const circle = document.getElementById("pie-fill");
+  const text = document.getElementById("pie-percent");
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+
+  circle.style.transition = "stroke-dashoffset 1s ease";
+  circle.style.strokeDashoffset = offset;
+
+  let current = 0;
+  const step = Math.ceil(percent / 30);
+  const interval = setInterval(() => {
+    current += step;
+    if (current >= percent) {
+      current = percent;
+      clearInterval(interval);
+    }
+    text.textContent = current + "%";
+  }, 30);
+}
+
+/* ---------------------------------------------------------
+   COUNCIL VERDICT LOGIC
+--------------------------------------------------------- */
+function getCouncilVerdict(percent) {
+  if (percent >= 90) {
+    return "The Council rises in awe — your mastery of Queen Elisa Ellen is unquestionable.";
+  }
+  if (percent >= 75) {
+    return "The Council nods approvingly — you know her well, though a few details slipped past.";
+  }
+  if (percent >= 50) {
+    return "The Council adjusts their pearls — respectable, but you may need remedial Queen Studies.";
+  }
+  if (percent >= 25) {
+    return "The Council sighs dramatically — were you even paying attention during these moments?";
+  }
+  return "The Council faints. Truly. A performance so chaotic it defies classification.";
+}
+
 /* ---------------------------------------------------------
    BIRTHDAY SCREEN TRANSITION
 --------------------------------------------------------- */
@@ -931,7 +867,10 @@ continueBtn.addEventListener("click", () => {
 birthdayRestartBtn.addEventListener("click", () => {
   location.reload();
 });
-7
+
+/* ---------------------------------------------------------
+   CONFETTI ANIMATION
+--------------------------------------------------------- */
 function launchConfetti() {
   const duration = 2000;
   const end = Date.now() + duration;
@@ -956,7 +895,7 @@ function launchConfetti() {
       const fallDuration = 1200 + Math.random() * 800;
       confetti.animate(
         [
-          { transform: `translateY(0px) rotate(0deg)` },
+          { transform: "translateY(0px) rotate(0deg)" },
           { transform: `translateY(${window.innerHeight + 40}px) rotate(360deg)` }
         ],
         { duration: fallDuration, easing: "linear" }
@@ -973,7 +912,8 @@ function randomConfettiColor() {
   const colors = ["#ff6b6b", "#ffd93d", "#6bcB77", "#4d96ff", "#f06595"];
   return colors[Math.floor(Math.random() * colors.length)];
 }
+</script>
 
-  </script>
+  
 </body>
 </html>
