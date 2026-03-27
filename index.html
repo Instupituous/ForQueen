@@ -871,6 +871,7 @@ continueBtn.addEventListener("click", () => {
   resultsScreen.style.display = "none";
   birthdayScreen.style.display = "block";
   launchConfetti();
+  document.getElementById("confetti-audio").play();
 });
 
 birthdayRestartBtn.addEventListener("click", () => {
@@ -923,6 +924,7 @@ function randomConfettiColor() {
 }
 </script>
 
-  
+  <audio id="confetti-audio" src="MoreThanICanSay.mp3"></audio>
+
 </body>
 </html>
